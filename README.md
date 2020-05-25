@@ -1,5 +1,7 @@
 # dynamo.core
 
+This is WIP. Not advisable to try to use it for anything yet.. everything will change!
+
 FIXME: my new application.
 
 ## Installation
@@ -55,7 +57,7 @@ FIXME: listing of options this app accepts.
 
 ## License
 
-Copyright © 2020 Kmclean
+Copyright © 2020 Kira McLean
 
 Distributed under the Eclipse Public License either version 1.0 or (at
 your option) any later version.

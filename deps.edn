@@ -1,7 +1,11 @@
 {:paths ["src" "resources"]
  :deps {org.clojure/clojure {:mvn/version "1.10.1"}
         markdown-clj {:mvn/version "1.10.4"}
-        funcool/datoteka {:mvn/version "1.2.0"}}
+        funcool/datoteka {:mvn/version "1.2.0"}
+        de.ubercode.clostache/clostache {:mvn/version "1.4.0"}
+        ersimont/clj-front-matter {:git/url "https://github.com/ersimont/clj-front-matter"
+                                   :sha "9c9420bd68d8c6974a7c11940ccc829618e0f31f"}
+        }
  :aliases
  {:dev {:extra-deps {vvvvalvalval/scope-capture {:mvn/version "0.3.2"}}}
   :test {:extra-paths ["test"]

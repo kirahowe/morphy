@@ -12,11 +12,21 @@
   - specify the name of a template in the front-matter (instead of using the
     default one)
 
+- [ ] Support overriding partials in child directories
+  - closest partial gets used
+  - also support no partials
+
+- [ ] Support non-html mustache templates
+  - file-name.md.mustache would get treated like a mustache template/partial,
+    but also processed as markdown first before being templated
+  - always pass mustache html, but allow for other processing first
+
 - [ ] Pass a tree of pages to templates as `pages`
   - so templates can loop through them
     - {:root [,,,]
       :child [,,,]
       :child.child-of-child [,,,]}
+
 
 - [ ] Explode loose pages into directories with an index in them
   - so the url doesn't need to end with .html
@@ -30,11 +40,13 @@
 
 -----
 
+- [ ] Do something about duplicate slugs
+  - fail?
+  - warn and add a number to them?
+
 - [ ] Support a way to pass meta-data other than front-matter
   - so that people can have pure html/md/txt/etc files without weird stuff at
     the top
-
-
 
 # Better code
 

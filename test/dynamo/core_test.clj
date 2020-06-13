@@ -1,10 +1,20 @@
 (ns dynamo.core-test
   (:require [clojure.test :refer [deftest testing is]]
             [dynamo.core :as sut]
-            [clojure.java.io :as io]))
+            [clojure.java.io :as io]
+            [datoteka.core :as fs]
+            [clojure.spec.alpha :as s]
+            [dynamo.content.html :as html]
+            [expound.alpha :as ex]
+            [dynamo.content :as content]))
+
+(require 'sc.api)
 
 (def input-dir "test/dynamo/resources/content/")
 (def output-dir "test/dynamo/resources/site/")
+
+(defn cleanup! []
+  (fs/delete output-dir))
 
 (deftest copies-files-to-the-right-place
   (testing "turns content into a static site"

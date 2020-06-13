@@ -1,0 +1,14 @@
+<header>
+  <h1>Kira McLean</h1>
+  <p>Welcome to my blog. Thanks for visiting. Check out my writing below.</p>
+
+  <nav>
+    <ol>
+      {{#site.children}}
+      <li>
+        <a href="{{slug}}">{{title}}</a>
+      </li>
+      {{/site.children}}
+    </ol>
+  </nav>
+</header>

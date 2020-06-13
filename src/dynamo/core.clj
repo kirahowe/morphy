@@ -4,9 +4,9 @@
             [dynamo.content :as content]
             [dynamo.data :as data]
             [dynamo.templates :as templates]
-            [dynamo.front-matter :as front-matter]
+            [dynamo.metadata :as metadata]
             [clojure.spec.alpha :as s]
-            [clojure.string :as str]))
+            [dynamo.util :as u]))
 
 (require 'sc.api)
 
@@ -24,34 +24,20 @@
     (when-not (fs/exists? parent)
       (fs/create-dir parent))))
 
-(defn- write-file! [{:keys [output-dir]} {:keys [path content]}]
-  ;; TODO return something useful here -- what got written, maybe? success/error?
+(defn- write-file! [{:keys [output-dir]} {:keys [path content] :as page}]
   (let [file-name (fs/path output-dir path)]
     (ensure-dir! file-name)
     (spit file-name content)
-    (println "Wrote " path)))
+    (println "Wrote " path)
+    (assoc page :success true)))
 
-(defn- write-files [{:keys [data] :as context}]
-  (doall (map (partial write-file! context) data)))
+(defn- write-files [{:keys [site] :as context}]
+  (doall (u/map-leaves (partial write-file! context) site)))
 
-(defn- insert-into-templates [{:keys [input-dir data] :as context}]
-  (->> data
-       (map (partial templates/render input-dir))
-       (assoc context :data)))
-
-(defn- extract-front-matter [{:keys [data] :as context}]
-  (->> data (map front-matter/extract) (assoc context :data)))
-
-(defn- convert-to-html [{:keys [data] :as context}]
-  (->> data (map content/process) (assoc context :data)))
-
-;; (s/fdef process
-;;   :args (s/coll-of ::content/page)
-;;   :ret (s/coll-of ::content/page)
-;;   :fn #(= (-> % :ret count) (-> % :args count)))
-
-(defn load-data [{:keys [input-dir] :as context}]
-  (->> input-dir data/load-pages (assoc context :data)))
+;; (defn- insert-into-templates [{:keys [input-dir to-process] :as context}]
+;;   (->> to-process
+;;        (map (partial templates/render input-dir))
+;;        (assoc context :to-process)))
 
 ;; (s/def ::input-dir string?)
 ;; (s/def ::output-dir string?)
@@ -59,13 +45,15 @@
 ;; (s/fdef generate-site
 ;;   :args ::initial-context)
 
-(defn generate-site [context]
-  (->> context
-       load-data
-       extract-front-matter
-       convert-to-html
-       insert-into-templates
-       write-files))
+(defn generate-site [{:keys [input-dir] :as context}]
+  (-> context
+      (assoc :site (data/load-site input-dir))
+      (assoc :partials (data/load-partials input-dir))
+      (update :site (partial u/map-leaves metadata/extract))
+      (update :site (partial u/map-leaves content/process))
+      templates/render
+      write-files
+      ))
 
 (defn -main
   "Generates a static website"

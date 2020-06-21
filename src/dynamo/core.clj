@@ -5,10 +5,9 @@
             [dynamo.data :as data]
             [dynamo.templates :as templates]
             [dynamo.metadata :as metadata]
-            [clojure.spec.alpha :as s]
-            [dynamo.util :as u]))
+            [clojure.java.io :as io]))
 
-(require 'sc.api)
+;; (require 'sc.api)
 
 (defn matches-ext [ext test-path]
   (re-find (re-pattern (str "\\." ext "$")) (str test-path)))
@@ -24,36 +23,32 @@
     (when-not (fs/exists? parent)
       (fs/create-dir parent))))
 
-(defn- write-file! [{:keys [output-dir]} {:keys [path content] :as page}]
+(defn- write-file! [{:keys [output-dir input-dir]} {:keys [path content]}]
   (let [file-name (fs/path output-dir path)]
     (ensure-dir! file-name)
-    (spit file-name content)
-    (println "Wrote " path)
-    (assoc page :success true)))
+    (if content
+      (spit file-name content)
+      (io/copy (io/file input-dir path) (io/file file-name)))
+    (println "Wrote " (str file-name))))
 
-(defn- write-files [{:keys [site] :as context}]
-  (doall (u/map-leaves (partial write-file! context) site)))
+(defn- write-files [{:keys [pages output-dir] :as context}]
+  (ensure-dir! output-dir)
+  (doall
+    (for [page pages]
+      (write-file! context page)))
+  (println "Success!"))
 
-;; (defn- insert-into-templates [{:keys [input-dir to-process] :as context}]
-;;   (->> to-process
-;;        (map (partial templates/render input-dir))
-;;        (assoc context :to-process)))
-
-;; (s/def ::input-dir string?)
-;; (s/def ::output-dir string?)
-;; (s/def ::initial-context (s/keys :req-un [::input-dir ::output-dir]))
-;; (s/fdef generate-site
-;;   :args ::initial-context)
+(defn build-pages [input-dir]
+  (->> input-dir
+       data/load-pages
+       (map metadata/extract)
+       (map content/process)))
 
 (defn generate-site [{:keys [input-dir] :as context}]
   (-> context
-      (assoc :site (data/load-site input-dir))
-      (assoc :partials (data/load-partials input-dir))
-      (update :site (partial u/map-leaves metadata/extract))
-      (update :site (partial u/map-leaves content/process))
+      (assoc :pages (build-pages input-dir))
       templates/render
-      write-files
-      ))
+      write-files))
 
 (defn -main
   "Generates a static website"

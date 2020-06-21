@@ -2,32 +2,51 @@
   (:require [clojure.test :refer [deftest testing is]]
             [dynamo.core :as sut]
             [clojure.java.io :as io]
-            [datoteka.core :as fs]
-            [clojure.spec.alpha :as s]
-            [dynamo.content.html :as html]
-            [expound.alpha :as ex]
-            [dynamo.content :as content]))
+            [datoteka.core :as fs]))
 
-(require 'sc.api)
-
-(def input-dir "test/dynamo/resources/content/")
+(def input-dir "test/dynamo/resources/test-site/")
 (def output-dir "test/dynamo/resources/site/")
 
-(defn cleanup! []
-  (fs/delete output-dir))
+(def context {:input-dir input-dir :output-dir output-dir})
 
-(deftest copies-files-to-the-right-place
-  (testing "turns content into a static site"
-    (sut/generate-site {:input-dir input-dir :output-dir output-dir})
-    (let [result (->> output-dir io/file file-seq (map str) set) ]
-      (is (= #{"test/dynamo/resources/site"
-               "test/dynamo/resources/site/a-file.html"
-               "test/dynamo/resources/site/already-html.html" ;; does not mess with files that are already html
-               "test/dynamo/resources/site/assets"
-               "test/dynamo/resources/site/assets/leave.css" ;; does not process assets in the assets dir
-               "test/dynamo/resources/site/a-directory"
-               "test/dynamo/resources/site/a-directory/another-file.html"
-               "test/dynamo/resources/site/a-directory/nested"
-               "test/dynamo/resources/site/a-directory/nested/a-file.html"}
+(defn cleanup! []
+  (when (fs/exists? output-dir)
+    (fs/delete output-dir)))
+
+(deftest generate-site
+  (cleanup!)
+  (sut/generate-site context)
+
+  (testing "it writes the right files"
+    (let [result (->> output-dir
+                      io/file
+                      file-seq
+                      (remove fs/directory?)
+                      (map str)
+                      set)]
+      (is (= #{;; handles mustache templated-files
+               "test/dynamo/resources/site/index.html"
+
+               ;; handles multiple files in root directory
+               "test/dynamo/resources/site/root-file/index.html"
+
+               ;; does not break files that are already html
+               "test/dynamo/resources/site/already-html/index.html"
+
+               ;; converts md->html, expands loose files
+               "test/dynamo/resources/site/blog/a-post/index.html"
+               "test/dynamo/resources/site/blog/another-post/index.html"
+
+               ;; does not process assets in the assets directory
+               "test/dynamo/resources/site/assets/leave.css"
+
+               ;; handles nested directories
+               "test/dynamo/resources/site/a-directory/nested/another-file/index.html"
+               "test/dynamo/resources/site/a-directory/second-nested/a-file/index.html"}
              result))))
+
+  (testing "copies assets as they are"
+    (is (= ".body {\n  background: orange;\n}\n"
+           (slurp "test/dynamo/resources/site/assets/leave.css"))))
+
   (cleanup!))

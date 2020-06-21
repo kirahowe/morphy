@@ -3,8 +3,8 @@
 # Site generation
 
 - [x] Collect partials and pass them to mustache renderer
-- [ ] override partials in subdirectories -- closest one wins
-  - partials = {:file-name-minus-ext "partial template" ,,,}
+
+- [ ] Support nested directories of partials
 
 - [ ] Support custom templates
   - specify the name of a template in the front-matter (instead of using the
@@ -20,10 +20,6 @@
   - always pass mustache html, but allow for other processing first
 
 - [x] Pass a tree of pages to templates as `pages`
-  - so templates can loop through them
-    - maybe {:root [,,,]
-             :child [,,,]
-             :child.child-of-child [,,,]}
 
 - [x] Expand loose pages into directories with an index in them
   - so the url doesn't need to end with .html
@@ -32,11 +28,14 @@
 
 - [ ] Add sorting -- by date? by sort key?
 
+- [ ] Ignore file system crap e.g. `.DS_Store` files
+
 ## Error Cases
 - [ ] more deeply nested directories
   - i.e. have an empty directory level in a path
 - [ ] missing template vars at mustache compile time
 - [ ] missing template files
+  - require at least top-level layout
 - [ ] missing partials
 - [ ] use generated tests to come up with dummy data
 
@@ -83,4 +82,10 @@ To document:
 - default sorting order
 - assumed locations of partials, layout
 - how mustache files get rendered
+  - rendering contexts
+    - layouts get page as rendering context, individual pages get whole site
 - vars available in templates (children etc.)
+  - rendering context gets passed on to partials
+- slug and canonical slug
+  - files automatically get put in a directory with an index so urls don't need
+    to have .html at the end, but this means the same content lives at two urls

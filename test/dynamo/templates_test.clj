@@ -4,7 +4,8 @@
             [dynamo.test-utils :as u]
             [dynamo.core :as core]
             [clojure.string :as str]
-            [datoteka.core :as fs]))
+            [datoteka.core :as fs])
+  (:import java.util.Date))
 
 (deftest populate-slug
   (testing "it inserts slug and canonical-slug into each page"
@@ -23,6 +24,17 @@
     (let [slugged (sut/populate-slug {:path "even-more/nested/page-name/index.html"})]
       (is (= "/even-more/nested/page-name/" (:slug slugged)))
       (is (= "/even-more/nested/page-name/index.html"(:canonical-slug slugged))))))
+
+(deftest format-dates
+  (testing "it formats dates anywhere they appear")
+
+  (testing "it formats nested dates"
+    (let [formatted (sut/format-dates {:date (Date. 1111111111111)
+                                       :nested {:date (Date. 1111211111111)
+                                                :more-nested {:date (Date. 1113111111111)}}})]
+      (is (= "March 17, 2005" (:date formatted)))
+      (is (= "March 19, 2005" (-> formatted :nested :date)))
+      (is (= "April 10, 2005" (-> formatted :nested :more-nested :date))))))
 
 (defn- get-site [dir]
   (let [input-dir (str u/resources "templates/" dir)]

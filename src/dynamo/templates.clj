@@ -1,7 +1,9 @@
 (ns dynamo.templates
   (:require [datoteka.core :as fs]
             [clostache.parser :as m]
-            [clojure.string :as str]))
+            [clojure.string :as str]
+            [clojure.walk :as walk])
+  (:import java.text.SimpleDateFormat))
 
 (defn- strip-final-ext [path]
   (-> path fs/split-ext first fs/path))
@@ -15,6 +17,12 @@
     (-> page
         (assoc :slug slug)
         (assoc :canonical-slug (str slug "index.html")))))
+
+(defn format-dates [page]
+  (let [f (fn [[k v]] (if (= java.util.Date (type v))
+                        [k (.format (SimpleDateFormat. "MMMM dd, yyyy") v)]
+                        [k v]))]
+    (walk/postwalk (fn [x] (if (map? x) (into {} (map f x)) x)) page)))
 
 (defn templatable? [path]
   (not (str/includes? (str path) "assets/")))
@@ -106,7 +114,7 @@
     (-> parent-dir str (str/replace #"\/index\..+$" "") keyword)))
 
 (defn render [{:keys [pages input-dir] :as context}]
-  (let [pages* (map (comp populate-slug flatten-front-matter) pages)
+  (let [pages* (map (comp populate-slug flatten-front-matter format-dates) pages)
         site-model (group-by get-group-name pages*)]
     (->> pages*
          (map (partial template-page site-model input-dir))

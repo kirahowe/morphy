@@ -7,7 +7,7 @@
             [dynamo.metadata :as metadata]
             [clojure.java.io :as io]))
 
-;; (require 'sc.api)
+(require 'sc.api)
 
 (defn matches-ext [ext test-path]
   (re-find (re-pattern (str "\\." ext "$")) (str test-path)))
@@ -23,7 +23,7 @@
     (when-not (fs/exists? parent)
       (fs/create-dir parent))))
 
-(defn- write-file! [{:keys [output-dir input-dir]} {:keys [path content]}]
+(defn- write-file! [{:keys [output-dir input-dir]} {:keys [path content] :as page}]
   (let [file-name (fs/path output-dir path)]
     (ensure-dir! file-name)
     (if content

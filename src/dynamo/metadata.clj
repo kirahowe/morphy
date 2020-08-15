@@ -1,9 +1,11 @@
 (ns dynamo.metadata
   (:require [front-matter.core :as fm]
-            [datoteka.core :as fs]))
+            [datoteka.core :as fs]
+            [clojure.string :as str]))
 
-(defn- first-line-plaintext [content]
-  (or (re-find #"[^#*\s].+" content) ""))
+(defn- first-header-as-plaintext [content]
+  (let [[_match header] (re-find #"^#*\s(.+)" (str/trim content))]
+    header))
 
 (defn- remove-from-front-matter [{:keys [front-matter] :as page} kw]
   (let [updated-fm (dissoc front-matter kw)]
@@ -11,11 +13,17 @@
       (dissoc page :front-matter)
       (assoc page :front-matter updated-fm))))
 
-(defn- fill-in-defaults [{{:keys [title]} :front-matter
-                          content :content
-                          :as page}]
+(defn- add-title [{{:keys [title]} :front-matter
+                   content :content
+                   :as page}]
+  (let [title (or title (first-header-as-plaintext content))]
+    (cond-> page
+      title (assoc :title (or title (first-header-as-plaintext content))
+                   :has-title? true))))
+
+(defn- fill-in-defaults [page]
   (-> page
-      (assoc :title (or title (first-line-plaintext content)))
+      add-title
       (remove-from-front-matter :title)))
 
 (defn- rename-slug [slug path]

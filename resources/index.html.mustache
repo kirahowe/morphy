@@ -1,8 +1,8 @@
 <ul>
-  {{#site.posts.children}}
+  {{#blog}}
   <li>
     <a href="{{slug}}">{{title}}</a>
-    <date>{{date}}</date>
+    <time datetime="{{date}}">{{date}}</time>
   </li>
-  {{/site.posts.children}}
+  {{/blog}}
 </ul>

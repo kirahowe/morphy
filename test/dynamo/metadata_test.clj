@@ -43,12 +43,20 @@
            (slug (sut/extract (test-page "nested/path/custom-slug.md")))))))
 
 (deftest getting-title
-  (testing "it defaults the title to the first line and strips md headers"
+  (testing "it defaults the title to the first line that is a header and strips md headers"
     (is (= "This is the first line"
            (:title (sut/extract (test-page "first-line-no-front-matter.md")))))
     (is (= "This is the first line should be the title"
            (:title (sut/extract (test-page "first-line-with-front-matter.md"))))))
 
+  (testing "it does not add a header if the first line is not one"
+    (let [no-title-page (sut/extract (test-page "no-header.html"))]
+      (is (= nil (:title no-title-page)))
+      (is (= nil (:has-title?  no-title-page)))))
+
   (testing "it's title is over-writable by user front matter"
     (is (= "Custom user title"
-           (:title (sut/extract (test-page "title-override.md")))))))
+           (:title (sut/extract (test-page "title-override.md"))))))
+
+  (testing "it adds a flag so templates can test for presence of a title"
+    (is (= true (:has-title? (sut/extract (test-page "title-override.md")))))))

@@ -9,6 +9,7 @@
 - [ ] Add sorting -- by date? by sort key?
 - [ ] Ignore file system crap e.g. `.DS_Store` files
   - ignore all dot files?
+- [ ] make date formatting configurable
 
 ---
 

@@ -2,7 +2,7 @@
   (:require [datoteka.core :as fs]
             [clostache.parser :as m]
             [clojure.string :as str]
-            [clojure.walk :as walk])
+            [dynamo.util :as util])
   (:import java.text.SimpleDateFormat))
 
 (defn- strip-final-ext [path]
@@ -19,10 +19,10 @@
         (assoc :canonical-slug (str slug "index.html")))))
 
 (defn format-dates [page]
-  (let [f (fn [[k v]] (if (= java.util.Date (type v))
-                        [k (.format (SimpleDateFormat. "MMMM dd, yyyy") v)]
-                        [k v]))]
-    (walk/postwalk (fn [x] (if (map? x) (into {} (map f x)) x)) page)))
+  (let [f (fn [[k v]]
+            (let [formatted (util/format-date v)]
+              [k formatted]))]
+    (util/transform-values page f)))
 
 (defn templatable? [path]
   (not (str/includes? (str path) "assets/")))

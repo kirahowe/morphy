@@ -1,43 +1,62 @@
+:root {
+  --color: #0091ab;
+  --white: #fbfbfb;
+  --black: #313131;
+  --grey: #8a8a8a;
+  --light-grey: #e1e1e1;
+}
+
 html {
   font-family: Helvetica;
-  color: #313131;
+  color: var(--black);
   line-height: 1.7;
+  background-color: var(--white);
+  font-size: 22px;
 }
 
 body {
-  height: 100vh;
-  display: grid;
-  grid-template-rows: auto 1fr auto;
-  grid-template-columns: 1fr minmax(0, 44rem) 1fr;
+  margin: 0;
+  min-height: 100vh;
+  max-width: 36rem;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  padding: 0 1em;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin-top: 3rem;
 }
 
 main {
-  grid-column-start: 2;
-  grid-row-start: 2;
+  flex: 1;
 }
 
 header {
-  grid-column-start: 2;
 }
 
 footer {
-  grid-column-start: 2;
-  grid-row-start: 3;
-  border-top: 2px solid #e1e1e1;
-  color: #a4a4a4;
+  border-top: 2px solid var(--light-grey);
+  color: var(--grey);
+  margin-top: 2rem;
+}
+
+footer small {
+  font-size: small;
 }
 
 a {
-  color: #0b8ca2;
+  color: var(--color);
+  transition: color 0.25s linear;
 }
 
-a:hover {
+a:hover, a:visited:hover {
   color: #313131;
 }
 
 
 a:visited {
-  color: #9104ae;
+  color: var(--grey);
 }
 
 main > ul:first-child {
@@ -46,7 +65,18 @@ main > ul:first-child {
   padding: 0
 }
 
+main > ul:first-child li {
+  margin-bottom: 1rem;
+}
+
 time {
   display: block;
   font-size: small;
+  color: #8a8a8a;
+}
+
+/* to prevent fouc */
+html {
+  visibility: visible;
+  opacity: 1;
 }

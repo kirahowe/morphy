@@ -1,17 +1,15 @@
-(ns dynamo.util)
+(ns dynamo.util
+  (:require [clojure.walk :as walk])
+  (:import java.text.SimpleDateFormat))
 
-(defn map-values [f m]
-  (->> m
-       (map (fn [[k v]] [k (f v)]))
-       (into {})))
+(defn transform-values [m f]
+  (walk/postwalk (fn [x]
+                   (if (map? x)
+                     (into {} (map f x))
+                     x))
+                 m))
 
-(defn map-leaves
-  "Applies f to every leaf of m.
-  Assumes all vals are either seqs or maps."
-  [f m]
-  (->> m
-       (map (fn [[k v]]
-              (if (seq? v)
-                [k (map f v)]
-                [k (map-leaves f v)])))
-       (into {})))
+(defn format-date [v]
+  (if (= java.util.Date (type v))
+    (.format (SimpleDateFormat. "MMMM dd, yyyy") v)
+    v))

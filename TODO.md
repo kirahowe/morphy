@@ -13,6 +13,7 @@
 
 ---
 
+- [x] format dates that get automatically cast from yaml
 - [x] Collect partials and pass them to mustache renderer
 - [x] Support nested directories of partials
 - [x] Support custom templates
@@ -83,8 +84,7 @@ To document:
 - assumed locations of partials, layout
 - how mustache files get rendered
   - rendering contexts (site and individual page attrs)
-    - layouts get page as rendering context, individual pages get whole site
-- vars available in templates (children etc.)
+- vars available in templates
   - rendering context gets passed on to partials
 - slug and canonical slug
   - files automatically get put in a directory with an index so urls don't need

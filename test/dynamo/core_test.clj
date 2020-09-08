@@ -50,11 +50,3 @@
            (slurp "test/dynamo/resources/site/assets/leave.css"))))
 
   (cleanup!))
-
-(deftest build-pages
-  (testing "it sorts the posts in descending order by date"
-    (let [pages (sut/build-pages input-dir)]
-      (sc.api/spy)
-      (is (= ["2020-01-02" "2020-01-01"]
-             pages)))
-    ))

@@ -7,7 +7,7 @@
             [dynamo.metadata :as metadata]
             [clojure.java.io :as io]))
 
-(require 'sc.api)
+;; (require 'sc.api)
 
 (defn matches-ext [ext test-path]
   (re-find (re-pattern (str "\\." ext "$")) (str test-path)))

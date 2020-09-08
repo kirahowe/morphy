@@ -27,9 +27,9 @@ Run the project directly:
 
     $ clojure -m dynamo.core
 
-Run the project's tests (they'll fail until you edit them):
+Run the project's tests:
 
-    $ clojure -A:test:runner
+    $ clj -A:test
 
 Build an uberjar:
 

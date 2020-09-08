@@ -136,12 +136,12 @@ More nested:
           "in pages"))
 
     (testing "it passes the page context to partials used in layouts"
-      (is (str/includes? just-layout "from partial - title: Index content")))
+      (is (str/includes? just-layout "from partial - title: Index title")))
 
     (testing "it passes the site context to partials used in layouts"
       (is (str/includes? just-layout "Root file - title: This is a root file"))
       (is (str/includes? just-layout "From partial: Root file - title: This is another root file"))
-      (is (str/includes? just-layout "Root file - title: Index content")))
+      (is (str/includes? just-layout "Root file - title: Index title")))
 
     (testing "it passes the page context to partials used in pages"
       (is (str/includes? page "from partial - title: A page title")))
@@ -164,5 +164,5 @@ More nested:
       (is (str/includes? just-layout "Root file - title: This is another root file")))
 
     (testing "it passes the rendering context to the partials"
-      (is (str/includes? just-layout "from partial - title: Index content"))
+      (is (str/includes? just-layout "from partial - title: Index title"))
       (is (str/includes? page "from partial - title: A page title")))))

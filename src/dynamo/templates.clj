@@ -2,8 +2,7 @@
   (:require [datoteka.core :as fs]
             [clostache.parser :as m]
             [clojure.string :as str]
-            [dynamo.util :as util])
-  (:import java.text.SimpleDateFormat))
+            [dynamo.util :as util]))
 
 (defn- strip-final-ext [path]
   (-> path fs/split-ext first fs/path))
@@ -93,10 +92,9 @@
 (defn- insert-into-layout [site-model layout partials page]
   (assoc page :content (m/render layout (merge page site-model) partials)))
 
-;; (require 'sc.api)
-(defn- template-page [site-model input-dir {:keys [path] :as page}]
+(defn- template-page [site-model input-dir {:keys [path :site/no-layout] :as page}]
   ;; TODO: handle this differently-- grab out all the assets first or something
-  (if (templatable? path)
+  (if (and (templatable? path) (not no-layout))
     (let [layout (get-layout page input-dir)
           partials (get-partials path input-dir {})]
       ((comp

@@ -123,7 +123,13 @@ More nested:
       (is (str/starts-with? (get-content site "custom")
                             "Custom layout: Root"))
       (is (str/starts-with? (get-content site "nested-custom")
-                            "Custom nested layout: Nested content")))))
+                            "Custom nested layout: Nested content")))
+
+    (testing "a user can optionally specify 'no layout' for a page"
+      (is (str/starts-with? (get-content site "no-layout")
+                            "This is not a layout"))
+      (is (str/starts-with? (get-content site "nested-no-layout")
+                            "This is not a layout")))))
 
 (deftest using-partials
   (let [site (get-site "partials")

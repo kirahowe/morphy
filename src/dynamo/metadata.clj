@@ -1,6 +1,5 @@
 (ns dynamo.metadata
-  (:require [front-matter.core :as fm]
-            [datoteka.core :as fs]
+  (:require [datoteka.core :as fs]
             [clojure.string :as str]))
 
 (defn- first-header-as-plaintext [content]
@@ -53,13 +52,9 @@
       (remove-from-front-matter :title)
       slugify-title))
 
-(defn- extract-front-matter [{:keys [content] :as page}]
-  (merge page (fm/parse-front-matter content)))
-
 (defn extract [{:keys [content] :as page}]
   (if content
     (-> page
-        extract-front-matter
         fill-in-title
         update-slug)
     page))

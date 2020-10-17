@@ -27,6 +27,10 @@
       (is (contains? result "a-file/index.html"))
       (is (contains? result "dir/loose/index.html")))
 
+    (testing "it does not expand paths for loose pages that are flagged"
+      (is (contains? result "404.html"))
+      (is (contains? result "dir/do-not-expand-me.html")))
+
     (testing "it does not change directories that already have an index in them"
       (is (contains? result "dir/already-expanded/index.html")))
 

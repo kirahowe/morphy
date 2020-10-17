@@ -54,3 +54,11 @@
   "Generates a static website"
   [context]
   (generate-site context))
+
+(comment
+  ;; (sort-by (comp :date val) #(compare %2 %1) ledger)
+  (def input-dir "/Users/kmclean/code/projects/blog/resources")
+  (def output-dir "/Users/kmclean/code/projects/blog/site")
+  (def context {:input-dir input-dir :output-dir output-dir})
+
+  (generate-site context))

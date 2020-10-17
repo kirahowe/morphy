@@ -32,15 +32,21 @@
                      :front-matter)))))
 
 (deftest renaming-slug-part-of-paths
-  (testing "it defaults the slug to the file name"
-    (is (= "lots-of-front-matter"
-           (slug (sut/extract (test-page "lots-of-front-matter.md"))))))
-
-  (testing "it's slug is over-writable by user front matter"
+  (testing "it prefers first a user specified slug if there is one"
     (is (= "custom-slug-different-than-the-file-name"
            (slug (sut/extract (test-page "custom-slug.md")))))
     (is (= "custom-slug-different-than-the-file-name"
-           (slug (sut/extract (test-page "nested/path/custom-slug.md")))))))
+           (slug (sut/extract (test-page "nested/path/custom-slug.md")))))
+    (is (= "custom-slug-not-the-title"
+           (slug (sut/extract (test-page "not-the-title.md"))))))
+
+  (testing "it slugifies the title if there is one"
+    (is (= "custom-user-title"
+           (slug (sut/extract (test-page "title-override.md"))))))
+
+  (testing "it defaults the slug to the file name"
+    (is (= "lots-of-front-matter"
+           (slug (sut/extract (test-page "lots-of-front-matter.md")))))))
 
 (deftest getting-title
   (testing "it defaults the title to the first line that is a header and strips md headers"
@@ -49,7 +55,7 @@
     (is (= "This is the first line should be the title"
            (:title (sut/extract (test-page "first-line-with-front-matter.md"))))))
 
-  (testing "it does not add a header if the first line is not one"
+  (testing "it does not add a title if the first line is not a header"
     (let [no-title-page (sut/extract (test-page "no-header.html"))]
       (is (= nil (:title no-title-page)))
       (is (= nil (:has-title?  no-title-page)))))

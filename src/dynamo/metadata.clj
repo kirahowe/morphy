@@ -21,11 +21,6 @@
       title (assoc :title (or title (first-header-as-plaintext content))
                    :has-title? true))))
 
-(defn- fill-in-defaults [page]
-  (-> page
-      add-title
-      (remove-from-front-matter :title)))
-
 (defn- rename-slug [slug path]
   (let [name (fs/name path)
         current-slug (fs/parent path)]
@@ -36,14 +31,35 @@
       (update :path (partial rename-slug slug))
       (remove-from-front-matter :slug)))
 
+(defn- slugify [s]
+  (-> s
+      str/trim
+      str/lower-case
+      (str/replace #"\s+" "-")) )
+
+(defn- slugify-title [{:keys [title] :as page}]
+  (cond-> page
+    title (update :path (partial rename-slug (slugify title)))))
+
+(defn- update-slug [{:keys [title] {:keys [slug]} :front-matter :as page}]
+  (cond
+    slug (custom-slug page)
+    title (slugify-title page)
+    :else page))
+
+(defn- fill-in-title [page]
+  (-> page
+      add-title
+      (remove-from-front-matter :title)
+      slugify-title))
+
 (defn- extract-front-matter [{:keys [content] :as page}]
-  (let [parsed (fm/parse-front-matter content)]
-    (cond-> (merge page parsed)
-      (get-in parsed [:front-matter :slug]) custom-slug)))
+  (merge page (fm/parse-front-matter content)))
 
 (defn extract [{:keys [content] :as page}]
   (if content
     (-> page
         extract-front-matter
-        fill-in-defaults)
+        fill-in-title
+        update-slug)
     page))

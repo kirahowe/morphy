@@ -134,11 +134,11 @@ More nested:
 (deftest using-partials
   (let [site (get-site "partials")
         just-layout (get-content site "")
-        page (get-content site "page")]
+        page (get-content site "a-page-title")]
     (testing "it renders plain partials"
       (is (str/includes? just-layout "plain partial")
           "in layouts")
-      (is (str/includes? (get-content site "root1") "plain partial")
+      (is (str/includes? (get-content site "this-is-a-root-file") "plain partial")
           "in pages"))
 
     (testing "it passes the page context to partials used in layouts"

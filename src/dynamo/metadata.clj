@@ -17,44 +17,34 @@
                    :as page}]
   (let [title (or title (first-header-as-plaintext content))]
     (cond-> page
-      title (assoc :title (or title (first-header-as-plaintext content))
-                   :has-title? true))))
+      title (assoc :title title :has-title? true))))
 
-(defn- rename-slug [slug path]
+(defn- rename-slug [{:keys [path] :as page} slug]
   (let [name (fs/name path)
-        current-slug (fs/parent path)]
-    (fs/path (or (fs/parent current-slug) "") slug name)) )
-
-(defn- custom-slug [{{:keys [slug]} :front-matter :as page}]
-  (-> page
-      (update :path (partial rename-slug slug))
-      (remove-from-front-matter :slug)))
+        current-slug (fs/parent path)
+        current-parent (when current-slug (fs/parent current-slug))
+        new-path (fs/path (or current-parent "") slug name)]
+    (assoc page :path new-path)))
 
 (defn- slugify [s]
-  (-> s
-      str/trim
-      str/lower-case
-      (str/replace #"\s+" "-")) )
+  (some-> s
+          str/trim
+          str/lower-case
+          (str/replace #"\s+" "-")) )
 
-(defn- slugify-title [{:keys [title] :as page}]
-  (cond-> page
-    title (update :path (partial rename-slug (slugify title)))))
+(defn- get-new-slug [{:keys [title path] {custom-slug :slug} :front-matter}]
+  (or custom-slug
+      (and (fs/parent path) (slugify title))))
 
-(defn- update-slug [{:keys [title] {:keys [slug]} :front-matter :as page}]
-  (cond
-    slug (custom-slug page)
-    title (slugify-title page)
-    :else page))
+(defn- update-slug [page]
+  (if-let [new-slug (get-new-slug page)]
+    (-> page (rename-slug new-slug) (remove-from-front-matter :slug))
+    page))
 
 (defn- fill-in-title [page]
-  (-> page
-      add-title
-      (remove-from-front-matter :title)
-      slugify-title))
+  (-> page add-title (remove-from-front-matter :title)))
 
 (defn extract [{:keys [content] :as page}]
   (if content
-    (-> page
-        fill-in-title
-        update-slug)
+    (-> page fill-in-title update-slug)
     page))

@@ -34,14 +34,14 @@
                "test/dynamo/resources/site/already-html/index.html"
 
                ;; converts md->html, expands loose files
-               "test/dynamo/resources/site/blog/a-post/index.html"
-               "test/dynamo/resources/site/blog/another-post/index.html"
+               "test/dynamo/resources/site/blog/this-is-the-title/index.html"
+               "test/dynamo/resources/site/blog/a-title/index.html"
 
                ;; does not process assets in the assets directory
                "test/dynamo/resources/site/assets/leave.css"
 
                ;; handles nested directories
-               "test/dynamo/resources/site/a-directory/nested/another-file/index.html"
+               "test/dynamo/resources/site/a-directory/nested/custom-title/index.html"
                "test/dynamo/resources/site/a-directory/second-nested/a-file/index.html"}
              result))))
 

@@ -8,7 +8,7 @@
 (def root (str u/resources "metadata/"))
 
 (defn- test-page [file-name]
-  (data/->page u/resources (fs/path root file-name)))
+  (data/->page root (fs/path root file-name)))
 
 (defn- slug [{:keys [path]}]
   (-> path fs/parent fs/name))
@@ -46,7 +46,15 @@
 
   (testing "it defaults the slug to the file name"
     (is (= "lots-of-front-matter"
-           (slug (sut/extract (test-page "lots-of-front-matter.md")))))))
+           (slug (sut/extract (test-page "lots-of-front-matter.md"))))))
+
+  (testing "it does not re-title slugs for current index files"
+    (is (= "index.md"
+           (-> (sut/extract (test-page "index.md")) :path str))))
+
+  (testing "it does rename slugs for named leaf files"
+    (is (= "lots-of-front-matter/index.md"
+           (-> (sut/extract (test-page "lots-of-front-matter.md")) :path str)))))
 
 (deftest getting-title
   (testing "it defaults the title to the first line that is a header and strips md headers"

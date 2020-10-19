@@ -1,6 +1,5 @@
 {:paths ["src" "resources" "test"]
  :deps {org.clojure/clojure {:mvn/version "1.10.1"}
-        markdown-clj {:mvn/version "1.10.4"}
         funcool/datoteka {:mvn/version "1.2.0"}
         de.ubercode.clostache/clostache {:mvn/version "1.4.0"}
         ersimont/clj-front-matter {:git/url "https://github.com/ersimont/clj-front-matter"

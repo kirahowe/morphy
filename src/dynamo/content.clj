@@ -1,6 +1,6 @@
 (ns dynamo.content
   (:require [datoteka.core :as fs]
-            [markdown.core :as md]
+            [commonmark-hiccup.core :as md]
             [clojure.spec.alpha :as s]
             [dynamo.content.html :as html]))
 
@@ -28,7 +28,7 @@
 (defmethod process "md" [page]
   (-> page
       (update :path ext-to-html)
-      (update :content md/md-to-html-string)))
+      (update :content md/markdown->html)))
 
 (defmethod process :default [page]
   page)

@@ -94,7 +94,7 @@
 (defn- insert-into-layout [site-model layout partials page]
   (assoc page :content (m/render layout (merge page site-model) partials)))
 
-(defn- template-page [site-model input-dir {:keys [path :site/no-layout] :as page}]
+(defn- template-page [site-model input-dir {:keys [path] :as page}]
   ;; TODO: handle this differently-- grab out all the assets first or something
   (if (templatable? path)
     (let [layout (get-layout page input-dir)

@@ -1,6 +1,6 @@
 (ns dynamo.templates
   (:require [datoteka.core :as fs]
-            [clostache.parser :as m]
+            [cljstache.core :as m]
             [clojure.string :as str]
             [dynamo.util :as util]))
 

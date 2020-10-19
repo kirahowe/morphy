@@ -171,4 +171,8 @@ More nested:
 
     (testing "it passes the rendering context to the partials"
       (is (str/includes? just-layout "from partial - title: Index title"))
-      (is (str/includes? page "from partial - title: A page title")))))
+      (is (str/includes? page "from partial - title: A page title")))
+
+    (testing "pages that use no layout can still use partials"
+      (is (str/starts-with? (get-content site "no-layout")
+                            "plain partial - no layout")))))

@@ -43,9 +43,11 @@
     (when (fs/exists? template-path)
       template-path)))
 
-(defn- get-layout [{:keys [path layout]} input-dir]
-  (slurp (or (find-named-template layout input-dir)
-             (first-found-template path input-dir))))
+(defn- get-layout [{:keys [path layout :site/no-layout]} input-dir]
+  (if no-layout
+    "{{{content}}}"
+    (slurp (or (find-named-template layout input-dir)
+               (first-found-template path input-dir)))))
 
 (defn- strip-extensions[path]
   (str/replace path #"\..+$" ""))
@@ -94,7 +96,7 @@
 
 (defn- template-page [site-model input-dir {:keys [path :site/no-layout] :as page}]
   ;; TODO: handle this differently-- grab out all the assets first or something
-  (if (and (templatable? path) (not no-layout))
+  (if (templatable? path)
     (let [layout (get-layout page input-dir)
           partials (get-partials path input-dir {})]
       ((comp

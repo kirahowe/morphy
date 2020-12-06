@@ -29,7 +29,7 @@ Run the project directly:
 
 Run the project's tests:
 
-    $ clj -A:test
+    $ clj -M:test
 
 Build an uberjar:
 

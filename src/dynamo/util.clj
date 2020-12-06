@@ -2,10 +2,12 @@
   (:require [clojure.walk :as walk])
   (:import java.text.SimpleDateFormat))
 
-(defn transform-values [m f]
+(defn deep-transform-values [m f]
   (walk/postwalk (fn [x]
                    (if (map? x)
-                     (into {} (map f x))
+                     (->> x
+                          (map (fn [[k v]] [k (f v)]))
+                          (into {}))
                      x))
                  m))
 
@@ -13,3 +15,8 @@
   (if (= java.util.Date (type v))
     (.format (SimpleDateFormat. "MMMM dd, yyyy") v)
     v))
+
+(defn map-values [m f]
+  (->> m
+       (map (fn [[k v]] [k (f v)]))
+       (into {})))

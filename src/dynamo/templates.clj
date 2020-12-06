@@ -18,10 +18,7 @@
         (assoc :canonical-slug (str slug "index.html")))))
 
 (defn format-dates [page]
-  (let [f (fn [[k v]]
-            (let [formatted (util/format-date v)]
-              [k formatted]))]
-    (util/transform-values page f)))
+  (util/deep-transform-values page util/format-date))
 
 (defn templatable? [path]
   (not (str/includes? (str path) "assets/")))
@@ -46,13 +43,13 @@
 
 (def null-layout "{{{content}}}")
 
-(defn- find-layout [{:keys [path layout :site/no-layout]} input-dir]
+(defn- find-layout [{:keys [path layout]} input-dir]
   (if-let [template-path (or (find-named-template layout input-dir)
                              (first-found-template path input-dir))]
     (slurp template-path)
     null-layout))
 
-(defn- get-layout [page input-dir]
+(defn- get-layout [{:keys [:site/no-layout] :as page} input-dir]
   (if no-layout
     null-layout
     (find-layout page input-dir)))
@@ -123,7 +120,8 @@
 
 (defn render [{:keys [pages input-dir] :as context}]
   (let [pages* (map (comp populate-slug flatten-front-matter format-dates) pages)
-        site-model (group-by get-group-name pages*)]
+        site-model (-> (group-by get-group-name pages*)
+                       (util/map-values (partial sort-by :path)))]
     (->> pages*
          (map (partial template-page site-model input-dir))
          (assoc context :pages))))

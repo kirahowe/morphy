@@ -26,8 +26,6 @@
       (is (= "/even-more/nested/page-name/index.html"(:canonical-slug slugged))))))
 
 (deftest format-dates
-  (testing "it formats dates anywhere they appear")
-
   (testing "it formats nested dates"
     (let [formatted (sut/format-dates {:date (Date. 1111111111111)
                                        :nested {:date (Date. 1111211111111)
@@ -57,28 +55,28 @@
        :content))
 
 (deftest basic-templating
-  ;; (let [site (get-site "simple-layout")]
-;;     (testing "it inserts plain pages into the layout as is, and works without partials"
-;;       (is (= "In Layout! This is root content\n\n"
-;;              (get-content site "root")))
-;;       (is (= "In Layout! This is nested content\n\n"
-;;              (get-content site "nested")))
-;;       (is (= "In Layout! This is more nested content\n\n"
-;;              (get-content site "more-nested"))))
+  (let [site (get-site "simple-layout")]
+    (testing "it inserts plain pages into the layout as is, and works without partials"
+      (is (= "In Layout! This is root content\n\n"
+             (get-content site "root")))
+      (is (= "In Layout! This is nested content\n\n"
+             (get-content site "nested")))
+      (is (= "In Layout! This is more nested content\n\n"
+             (get-content site "more-nested"))))
 
-;;     (testing "it gives the site as context to pages that are themselves templates"
-;;       (is (= "In Layout! Root:
-;; - /root/
-;; - /templated/
+    (testing "it gives the site as context to pages that are themselves templates"
+      (is (= "In Layout! Root:
+- /root/
+- /templated/
 
-;; Nested:
-;; - /nested/nested/
+Nested:
+- /nested/nested/
 
-;; More nested:
-;; - /nested/more-nested/more-nested/
+More nested:
+- /nested/more-nested/more-nested/
 
-;; "
-;;              (get-content site "templated")))))
+"
+             (get-content site "templated")))))
 
   (testing "it maintains the order of files from the file list"
     (let [site (get-site "ordering")]
@@ -142,43 +140,35 @@
         just-layout (get-content site "")
         page (get-content site "a-page-title")]
     (testing "it renders plain partials"
-      (is (str/includes? just-layout "plain partial")
+      (is (str/includes? just-layout "Just a plain partial")
           "in layouts")
-      (is (str/includes? (get-content site "this-is-a-root-file") "plain partial")
+      (is (str/includes? page "Other plain partial")
           "in pages"))
 
-    (testing "it passes the page context to partials used in layouts"
-      (is (str/includes? just-layout "from partial - title: Index title")))
+    (testing "it passes the rendering context to the partials"
+      (is (str/includes? just-layout "Page data used in partial: title - Index title"))
+      (is (str/includes? page "Page data used in partial: title - A page title")))
 
     (testing "it passes the site context to partials used in layouts"
-      (is (str/includes? just-layout "Root file - title: This is a root file"))
-      (is (str/includes? just-layout "From partial: Root file - title: This is another root file"))
-      (is (str/includes? just-layout "Root file - title: Index title")))
+      (is (str/includes? just-layout "Site data used in partial:\nRoot file - title: Index title"))
+      (is (str/includes? just-layout "Root file - title: Root file 1"))
+      (is (str/includes? just-layout "Root file - title: Root file 2")))
 
     (testing "it passes the page context to partials used in pages"
-      (is (str/includes? page "from partial - title: A page title")))
+      (is (str/includes? page "Page data used in partial: title - A page title")))
 
     (testing "it passes the site context to partials used in pages"
       (is (str/includes? page "Page content:"))
-      (is (str/includes? page "Root file - title: This is a root file"))
-      (is (str/includes? page "From partial: Root file - title: This is another root file")))
+      (is (str/includes? page "Site data used in partial:\nRoot file - title: Index title")))
 
     (testing "it uses the nearest partial to the page"
       (is (str/includes? (get-content site "nested")
-                         "Nested content. From partial: closer partial"))
+                         "Nested content. From partial: Closer plain partial"))
       (is (str/includes? (get-content site "more-nested")
-                         "Deeper nested content. From partial: closer partial"))
+                         "Deeper nested content. From partial: Closer plain partial"))
       (is (str/includes? (get-content site "deeply-nested")
-                         "Different partial nested content. From partial: different nested partial")))
-
-    (testing "partials have access to the site model"
-      (is (str/includes? just-layout "Root file - title: This is a root file"))
-      (is (str/includes? just-layout "Root file - title: This is another root file")))
-
-    (testing "it passes the rendering context to the partials"
-      (is (str/includes? just-layout "from partial - title: Index title"))
-      (is (str/includes? page "from partial - title: A page title")))
+                         "Different partial nested content. From partial: Different nested partial")))
 
     (testing "pages that use no layout can still use partials"
-      (is (str/starts-with? (get-content site "no-layout")
-                            "plain partial - no layout")))))
+      (is (str/starts-with? (get-content site "no-layout-title")
+                            "Just a plain partial - no layout")))))

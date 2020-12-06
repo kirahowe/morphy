@@ -33,21 +33,29 @@
   (fs/path input-dir (get-parent-path path) "_layout.mustache"))
 
 (defn- first-found-template [path input-dir]
-  (let [template-path (get-template-path path input-dir)]
-    (if (fs/exists? template-path)
-      template-path
-      (recur (fs/parent path) input-dir))))
+  (when path
+    (let [template-path (get-template-path path input-dir)]
+      (if (fs/exists? template-path)
+        template-path
+        (recur (fs/parent path) input-dir)))))
 
 (defn- find-named-template [name input-dir]
   (let [template-path (fs/path (str input-dir "/_layouts/" name ".mustache"))]
     (when (fs/exists? template-path)
       template-path)))
 
-(defn- get-layout [{:keys [path layout :site/no-layout]} input-dir]
+(def null-layout "{{{content}}}")
+
+(defn- find-layout [{:keys [path layout :site/no-layout]} input-dir]
+  (if-let [template-path (or (find-named-template layout input-dir)
+                             (first-found-template path input-dir))]
+    (slurp template-path)
+    null-layout))
+
+(defn- get-layout [page input-dir]
   (if no-layout
-    "{{{content}}}"
-    (slurp (or (find-named-template layout input-dir)
-               (first-found-template path input-dir)))))
+    null-layout
+    (find-layout page input-dir)))
 
 (defn- strip-extensions[path]
   (str/replace path #"\..+$" ""))

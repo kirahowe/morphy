@@ -57,28 +57,33 @@
        :content))
 
 (deftest basic-templating
-  (let [site (get-site "simple-layout")]
-    (testing "it inserts plain pages into the layout as is, and works without partials"
-      (is (= "In Layout! This is root content\n\n"
-             (get-content site "root")))
-      (is (= "In Layout! This is nested content\n\n"
-             (get-content site "nested")))
-      (is (= "In Layout! This is more nested content\n\n"
-             (get-content site "more-nested"))))
+  ;; (let [site (get-site "simple-layout")]
+;;     (testing "it inserts plain pages into the layout as is, and works without partials"
+;;       (is (= "In Layout! This is root content\n\n"
+;;              (get-content site "root")))
+;;       (is (= "In Layout! This is nested content\n\n"
+;;              (get-content site "nested")))
+;;       (is (= "In Layout! This is more nested content\n\n"
+;;              (get-content site "more-nested"))))
 
-    (testing "it gives the site as context to pages that are themselves templates"
-      (is (= "In Layout! Root:
-- /root/
-- /templated/
+;;     (testing "it gives the site as context to pages that are themselves templates"
+;;       (is (= "In Layout! Root:
+;; - /root/
+;; - /templated/
 
-Nested:
-- /nested/nested/
+;; Nested:
+;; - /nested/nested/
 
-More nested:
-- /nested/more-nested/more-nested/
+;; More nested:
+;; - /nested/more-nested/more-nested/
 
-"
-             (get-content site "templated"))))))
+;; "
+;;              (get-content site "templated")))))
+
+  (testing "it maintains the order of files from the file list"
+    (let [site (get-site "ordering")]
+      (is (= "- First\n\n- Second\n\n- Third\n\n"
+             (get-content site ""))))))
 
 (deftest user-overrides
   (let [site (get-site "slugs")]

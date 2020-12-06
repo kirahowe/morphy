@@ -57,8 +57,8 @@
 
 (comment
   ;; (sort-by (comp :date val) #(compare %2 %1) ledger)
-  (def input-dir "/Users/kmclean/code/projects/blog/resources")
-  (def output-dir "/Users/kmclean/code/projects/blog/site")
+  (def input-dir "/Users/kmclean/code/projects/blog/site")
+  (def output-dir "/Users/kmclean/code/projects/blog/dist")
   (def context {:input-dir input-dir :output-dir output-dir})
 
   (generate-site context))

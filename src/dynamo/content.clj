@@ -1,8 +1,7 @@
 (ns dynamo.content
   (:require [datoteka.core :as fs]
             [commonmark-hiccup.core :as md]
-            [clojure.spec.alpha :as s]
-            [dynamo.content.html :as html]))
+            [clojure.spec.alpha :as s]))
 
 (defn- matches-ext [ext test-path]
   (re-find (re-pattern (str "\\." ext "$")) (str test-path)))
@@ -11,14 +10,14 @@
 (s/def ::content string?)
 (s/def ::page (s/keys :req-un [::path ::content]))
 
-(s/def ::html/path (s/and ::path (partial matches-ext "html")))
-(s/def ::html/page (s/keys :req-un [::html/path ::content ::layout]
-                           :opt-un [::slug]))
+;; (s/def ::html/path (s/and ::path (partial matches-ext "html")))
+;; (s/def ::html/page (s/keys :req-un [::html/path ::content ::layout]
+;;                            :opt-un [::slug]))
 
-(s/fdef ext-to-html
-  :args ::path
-  :ret ::html/path
-  :fn #(= (fs/name (:args %)) (fs/name (:ret %))))
+;; (s/fdef ext-to-html
+;;   :args ::path
+;;   :ret ::html/path
+;;   :fn #(= (fs/name (:args %)) (fs/name (:ret %))))
 
 (defn- ext-to-html [path]
   (-> path fs/split-ext first (str ".html") fs/path))

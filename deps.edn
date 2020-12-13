@@ -3,7 +3,8 @@
         funcool/datoteka {:mvn/version "1.2.0"}
         cljstache/cljstache {:mvn/version "2.0.6"}
         ersimont/clj-front-matter {:git/url "https://github.com/ersimont/clj-front-matter"
-                                   :sha "a3564a44093ef2dd6bfe8b6f37c1bc24bd1144ac"}}
+                                   :sha "a3564a44093ef2dd6bfe8b6f37c1bc24bd1144ac"}
+        com.atlassian.commonmark/commonmark {:mvn/version "0.16.1"}}
  :aliases
  {:dev {:extra-deps {vvvvalvalval/scope-capture {:mvn/version "0.3.2"}}}
   :test {:extra-paths ["test"]

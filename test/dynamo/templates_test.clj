@@ -66,8 +66,8 @@
 
     (testing "it gives the site as context to pages that are themselves templates"
       (is (= "In Layout! Root:
-- /root/
 - /templated/
+- /root/
 
 Nested:
 - /nested/nested/
@@ -80,7 +80,7 @@ More nested:
 
   (testing "it maintains the order of files from the file list"
     (let [site (get-site "ordering")]
-      (is (= "- First\n\n- Second\n\n- Third\n\n"
+      (is (= "- Top\n\n- Middle\n\n- Bottom\n\n"
              (get-content site ""))))))
 
 (deftest user-overrides
@@ -150,7 +150,7 @@ More nested:
       (is (str/includes? page "Page data used in partial: title - A page title")))
 
     (testing "it passes the site context to partials used in layouts"
-      (is (str/includes? just-layout "Site data used in partial:\nRoot file - title: Index title"))
+      (is (str/includes? just-layout "Site data used in partial:\nRoot file - title: Root file 2"))
       (is (str/includes? just-layout "Root file - title: Root file 1"))
       (is (str/includes? just-layout "Root file - title: Root file 2")))
 
@@ -159,7 +159,7 @@ More nested:
 
     (testing "it passes the site context to partials used in pages"
       (is (str/includes? page "Page content:"))
-      (is (str/includes? page "Site data used in partial:\nRoot file - title: Index title")))
+      (is (str/includes? page "Site data used in partial:\nRoot file - title: Root file 2")))
 
     (testing "it uses the nearest partial to the page"
       (is (str/includes? (get-content site "nested")

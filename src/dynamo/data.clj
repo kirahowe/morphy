@@ -40,4 +40,6 @@
        file-seq
        (remove fs/directory?)
        (remove template?)
+       sort
+       reverse
        (map (partial ->page input-dir))))

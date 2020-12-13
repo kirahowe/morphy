@@ -1,7 +1,8 @@
 (ns dynamo.content
   (:require [datoteka.core :as fs]
-            [commonmark-hiccup.core :as md]
-            [clojure.spec.alpha :as s]))
+            [clojure.spec.alpha :as s])
+  (:import org.commonmark.parser.Parser
+           org.commonmark.renderer.html.HtmlRenderer))
 
 (defn- matches-ext [ext test-path]
   (re-find (re-pattern (str "\\." ext "$")) (str test-path)))
@@ -24,10 +25,18 @@
 
 (defmulti process (fn [{:keys [path]}] (fs/ext path)))
 
+(defn- markdown->html [content]
+  (let [parsed (-> (Parser/builder)
+                   .build
+                   (.parse content))]
+    (-> (HtmlRenderer/builder)
+        .build
+        (.render parsed))))
+
 (defmethod process "md" [page]
   (-> page
       (update :path ext-to-html)
-      (update :content md/markdown->html)))
+      (update :content markdown->html)))
 
 (defmethod process :default [page]
   page)

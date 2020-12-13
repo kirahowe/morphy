@@ -15,8 +15,3 @@
   (if (= java.util.Date (type v))
     (.format (SimpleDateFormat. "MMMM dd, yyyy") v)
     v))
-
-(defn map-values [m f]
-  (->> m
-       (map (fn [[k v]] [k (f v)]))
-       (into {})))

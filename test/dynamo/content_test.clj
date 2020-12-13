@@ -7,7 +7,7 @@
 (deftest processing-content
   (testing "it converts md->html"
     (let [result (sut/process (u/test-page "content/markdown.md"))]
-      (is (= "<p>This is <em>not</em> double escaped <strong>markdown</strong>.</p>"
+      (is (= "<p>This is <em>not</em> double escaped <strong>markdown</strong>.</p>\n"
              (:content result)))
       (is (= "html" (-> result :path fs/ext)))))
 

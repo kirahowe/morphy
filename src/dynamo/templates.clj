@@ -120,8 +120,7 @@
 
 (defn render [{:keys [pages input-dir] :as context}]
   (let [pages* (map (comp populate-slug flatten-front-matter format-dates) pages)
-        site-model (-> (group-by get-group-name pages*)
-                       (util/map-values (partial sort-by :path)))]
+        site-model (group-by get-group-name pages*)]
     (->> pages*
          (map (partial template-page site-model input-dir))
          (assoc context :pages))))

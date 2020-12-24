@@ -1,6 +1,8 @@
 (ns dynamo.util
   (:require [clojure.walk :as walk])
-  (:import java.text.SimpleDateFormat))
+  (:import java.text.SimpleDateFormat
+           java.util.Locale
+           java.util.Date))
 
 (defn deep-transform-values [m f]
   (walk/postwalk (fn [x]
@@ -11,7 +13,14 @@
                      x))
                  m))
 
+(defn- format-date* [s v]
+  (.format (SimpleDateFormat. s Locale/US) v))
+
 (defn format-date [v]
-  (if (= java.util.Date (type v))
-    (.format (SimpleDateFormat. "MMMM dd, yyyy") v)
-    v))
+  (format-date* "MMMM dd, yyyy" v))
+
+(defn ->rfc-822-date [v]
+  (format-date* "E, d MMM yyyy HH:mm:ss Z" v))
+
+(defn now []
+  (->rfc-822-date (Date.)))

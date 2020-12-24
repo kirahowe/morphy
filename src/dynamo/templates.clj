@@ -13,12 +13,12 @@
 (defn populate-slug [{:keys [path] :as page}]
   (let [parent-path (when-let [p (fs/parent path)] (str "/" p))
         slug (str parent-path "/")]
-    (-> page
-        (assoc :slug slug)
-        (assoc :canonical-slug (str slug "index.html")))))
+    (assoc page :slug slug)))
 
-(defn format-dates [page]
-  (util/deep-transform-values page util/format-date))
+(defn format-dates [{:keys [date] :as page}]
+  (cond-> page
+    date (assoc :rfc-822-date (util/->rfc-822-date (:date page)))
+    date (update :date util/format-date)))
 
 (defn templatable? [path]
   (not (str/includes? (str path) "assets/")))
@@ -118,9 +118,16 @@
   (let [parent-dir (get-parent path)]
     (-> parent-dir str (str/replace #"\/index\..+$" "") keyword)))
 
-(defn render [{:keys [pages input-dir] :as context}]
-  (let [pages* (map (comp populate-slug flatten-front-matter format-dates) pages)
-        site-model (group-by get-group-name pages*)]
+(defn- assoc-metadata [root-url site]
+  (assoc site
+         :meta/last-modified (util/now)
+         :meta/root-url root-url))
+
+(defn render [{:keys [pages input-dir root-url] :as context}]
+  (let [pages* (map (comp populate-slug format-dates flatten-front-matter) pages)
+        site-model (->> pages*
+                        (group-by get-group-name)
+                        (assoc-metadata root-url))]
     (->> pages*
          (map (partial template-page site-model input-dir))
          (assoc context :pages))))

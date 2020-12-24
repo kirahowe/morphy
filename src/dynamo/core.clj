@@ -23,7 +23,7 @@
     (when-not (fs/exists? parent)
       (fs/create-dir parent))))
 
-(defn- write-file! [{:keys [output-dir input-dir]} {:keys [path content] :as page}]
+(defn- write-file! [{:keys [output-dir input-dir]} {:keys [path content]}]
   (let [file-name (fs/path output-dir path)]
     (ensure-dir! file-name)
     (if content
@@ -59,6 +59,6 @@
   ;; (sort-by (comp :date val) #(compare %2 %1) ledger)
   (def input-dir "/Users/kmclean/code/projects/blog/site")
   (def output-dir "/Users/kmclean/code/projects/blog/dist")
-  (def context {:input-dir input-dir :output-dir output-dir})
+  (def context {:input-dir input-dir :output-dir output-dir :root-url "https://kiramclean.com"})
 
   (generate-site context))

@@ -8,22 +8,18 @@
   (:import java.util.Date))
 
 (deftest populate-slug
-  (testing "it inserts slug and canonical-slug into each page"
+  (testing "it inserts slug into each page"
     (let [slugged (sut/populate-slug {:path "index.html"})]
-      (is (= "/" (:slug slugged)))
-      (is (= "/index.html" (:canonical-slug slugged))))
+      (is (= "/" (:slug slugged))))
 
     (let [slugged (sut/populate-slug {:path "this-is-the-slug/index.html"})]
-      (is (= "/this-is-the-slug/" (:slug slugged)))
-      (is (= "/this-is-the-slug/index.html" (:canonical-slug slugged))))
+      (is (= "/this-is-the-slug/" (:slug slugged))))
 
     (let [slugged (sut/populate-slug {:path "nested/page-name/index.html"})]
-      (is (= "/nested/page-name/" (:slug slugged)))
-      (is (= "/nested/page-name/index.html" (:canonical-slug slugged))))
+      (is (= "/nested/page-name/" (:slug slugged))))
 
     (let [slugged (sut/populate-slug {:path "even-more/nested/page-name/index.html"})]
-      (is (= "/even-more/nested/page-name/" (:slug slugged)))
-      (is (= "/even-more/nested/page-name/index.html"(:canonical-slug slugged))))))
+      (is (= "/even-more/nested/page-name/" (:slug slugged))))))
 
 (deftest format-dates
   (testing "it formats nested dates"
@@ -36,7 +32,7 @@
 
 (defn- get-site [dir]
   (let [input-dir (str u/resources "templates/" dir)]
-    (-> {:input-dir input-dir}
+    (-> {:input-dir input-dir :root-url "https://test.com"}
         (assoc :pages (core/build-pages input-dir))
         sut/render)))
 
@@ -85,16 +81,13 @@ More nested:
 
 (deftest user-overrides
   (let [site (get-site "slugs")]
-    (testing "it provides the slug and canonical slug in the page context"
+    (testing "it provides the slug in the page context"
       (is (str/starts-with?
-            (get-content site "root-override")
-            "slug: /root-override/ canonical-slug: /root-override/index.html"))
+            (get-content site "root-override") "slug: /root-override/"))
       (is (str/starts-with?
-            (get-content site "customized")
-            "slug: /nested/customized/ canonical-slug: /nested/customized/index.html"))
+            (get-content site "customized") "slug: /nested/customized/"))
       (is (str/starts-with?
-            (get-content site "already-expanded-custom-slug")
-            "slug: /already-expanded-custom-slug/ canonical-slug: /already-expanded-custom-slug/index.html"))))
+            (get-content site "already-expanded-custom-slug") "slug: /already-expanded-custom-slug/"))))
 
   (let [site (get-site "user-data")]
     (testing "it passes along custom user front matter to templates"
@@ -172,3 +165,23 @@ More nested:
     (testing "pages that use no layout can still use partials"
       (is (str/starts-with? (get-content site "no-layout-title")
                             "Just a plain partial - no layout")))))
+
+(deftest site-metadata
+  (let [site (get-site "meta")]
+    (testing "exposes root url to normal pages"
+      (is (str/includes? (get-content site "") "In page: https://test.com")))
+
+    (testing "exposes last modified to normal pages"
+      (is (re-find #"Last build time: \w+" (get-content site ""))))
+
+    (testing "exposts root url to layouts"
+      (is (str/includes? (get-content site "with-layout") "From layout: https://test.com")))
+
+    (testing "exposes last modified to normal pages"
+      (is (re-find #"Last build time: \w+" (get-content site "with-layout"))))
+
+    (testing "exposts root url to partials"
+      (is (str/includes? (get-content site "with-partial") "From partial: https://test.com")))
+
+    (testing "exposes last modified to partials"
+      (is (re-find #"Last build time: \w+" (get-content site "with-partial"))))))

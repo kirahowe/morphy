@@ -17,7 +17,7 @@
   (.format (SimpleDateFormat. s Locale/US) v))
 
 (defn format-date [v]
-  (format-date* "MMMM dd, yyyy" v))
+  (format-date* "MMM dd, yyyy" v))
 
 (defn ->rfc-822-date [v]
   (format-date* "E, d MMM yyyy HH:mm:ss Z" v))

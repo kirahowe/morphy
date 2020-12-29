@@ -1,8 +1,9 @@
 (ns dynamo.util
-  (:require [clojure.walk :as walk])
-  (:import java.text.SimpleDateFormat
-           java.util.Locale
-           java.util.Date))
+  (:require [clojure.walk :as walk]
+            [clojure.string :as str])
+  (:import java.time.ZonedDateTime
+           java.time.format.DateTimeFormatter
+           java.time.ZoneId))
 
 (defn deep-transform-values [m f]
   (walk/postwalk (fn [x]
@@ -13,14 +14,23 @@
                      x))
                  m))
 
-(defn- format-date* [s v]
-  (.format (SimpleDateFormat. s Locale/US) v))
+(defn- ensure-local-date [v]
+  (if (instance? java.util.Date v)
+    (-> v .toInstant
+        (.atZone (ZoneId/of "UTC"))
+        (.withZoneSameLocal (ZoneId/systemDefault)))
+    v))
 
 (defn format-date [v]
-  (format-date* "MMM dd, yyyy" v))
+  (-> v
+      ensure-local-date
+      (.format (DateTimeFormatter/ofPattern "MMM dd, yyyy"))
+      (str/replace #"\." "")))
 
-(defn ->rfc-822-date [v]
-  (format-date* "E, d MMM yyyy HH:mm:ss Z" v))
+(defn ->rfc-1123-date [v]
+  (-> v
+      ensure-local-date
+      (.format DateTimeFormatter/RFC_1123_DATE_TIME)))
 
 (defn now []
-  (->rfc-822-date (Date.)))
+  (->rfc-1123-date (ZonedDateTime/now)))

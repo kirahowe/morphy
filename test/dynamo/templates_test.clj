@@ -5,7 +5,10 @@
             [dynamo.core :as core]
             [clojure.string :as str]
             [datoteka.core :as fs])
-  (:import java.util.Date))
+  (:import java.time.ZonedDateTime
+           java.time.LocalDateTime
+           java.time.Month
+           java.time.ZoneId))
 
 (deftest populate-slug
   (testing "it inserts slug into each page"
@@ -20,15 +23,6 @@
 
     (let [slugged (sut/populate-slug {:path "even-more/nested/page-name/index.html"})]
       (is (= "/even-more/nested/page-name/" (:slug slugged))))))
-
-(deftest format-dates
-  (testing "it formats nested dates"
-    (let [formatted (sut/format-dates {:date (Date. 1111111111111)
-                                       :nested {:date (Date. 1111211111111)
-                                                :more-nested {:date (Date. 1113111111111)}}})]
-      (is (= "March 17, 2005" (:date formatted)))
-      (is (= "March 19, 2005" (-> formatted :nested :date)))
-      (is (= "April 10, 2005" (-> formatted :nested :more-nested :date))))))
 
 (defn- get-site [dir]
   (let [input-dir (str u/resources "templates/" dir)]
@@ -49,6 +43,18 @@
                  (= search (-> path fs/parent (or "") fs/name str))))
        first
        :content))
+
+(deftest format-dates
+  (testing "it formats dates and also adds a rss-formatted date"
+    (let [formatted (sut/format-dates {:date (ZonedDateTime/of
+                                               (LocalDateTime/of 2019, Month/MARCH, 28, 14, 33)
+                                               (ZoneId/of "UTC")) })]
+      (is (= "Mar 28, 2019" (:date formatted)))
+      (is (= "Thu, 28 Mar 2019 14:33:00 GMT" (:rss-date formatted)))))
+
+  (testing "it formats dates from front matter"
+    (let [site (get-site "dates")]
+      (is (= "Formatted date: Jan 01, 2020\n" (get-content site "page"))))))
 
 (deftest basic-templating
   (let [site (get-site "simple-layout")]

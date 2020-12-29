@@ -17,7 +17,7 @@
 
 (defn format-dates [{:keys [date] :as page}]
   (cond-> page
-    date (assoc :rfc-822-date (util/->rfc-822-date (:date page)))
+    date (assoc :rss-date (util/->rfc-1123-date (:date page)))
     date (update :date util/format-date)))
 
 (defn templatable? [path]

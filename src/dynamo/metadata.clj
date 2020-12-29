@@ -21,9 +21,7 @@
 
 (defn- rename-slug [{:keys [path] :as page} slug]
   (let [name (fs/name path)
-        current-slug (fs/parent path)
-        current-parent (when current-slug (fs/parent current-slug))
-        new-path (fs/path (or current-parent "") slug name)]
+        new-path (fs/path slug name)]
     (assoc page :path new-path)))
 
 (defn- slugify [s]
@@ -32,9 +30,16 @@
           str/lower-case
           (str/replace #"\s+" "-")) )
 
-(defn- get-new-slug [{:keys [title path] {custom-slug :slug} :front-matter}]
+(defn- slug-from-title [{:keys [title path]}]
+  (let [current-slug (fs/parent path)
+        from-title (slugify title)
+        current-parent (when current-slug (fs/parent current-slug))
+        new-slug (str current-parent (when current-parent "/") from-title)]
+    (and current-slug from-title new-slug)))
+
+(defn- get-new-slug [{{custom-slug :slug} :front-matter :as page}]
   (or custom-slug
-      (and (fs/parent path) (slugify title))))
+      (slug-from-title page)))
 
 (defn- update-slug [page]
   (if-let [new-slug (get-new-slug page)]

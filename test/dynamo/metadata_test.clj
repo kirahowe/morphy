@@ -11,7 +11,7 @@
   (data/->page root (fs/path root file-name)))
 
 (defn- slug [{:keys [path]}]
-  (-> path fs/parent fs/name))
+  (-> path fs/parent str))
 
 (deftest extract-test
   (testing "it pulls front-matter out to the same level as the page"
@@ -33,16 +33,18 @@
 
 (deftest renaming-slug-part-of-paths
   (testing "it prefers first a user specified slug if there is one"
-    (is (= "custom-slug-different-than-the-file-name"
+    (is (= "some/path/custom-slug-different-than-the-file-name"
            (slug (sut/extract (test-page "custom-slug.md")))))
-    (is (= "custom-slug-different-than-the-file-name"
+    (is (= "random/custom-slug-different-than-the-file-name"
            (slug (sut/extract (test-page "nested/path/custom-slug.md")))))
     (is (= "custom-slug-not-the-title"
            (slug (sut/extract (test-page "not-the-title.md"))))))
 
   (testing "it slugifies the title if there is one"
     (is (= "custom-user-title"
-           (slug (sut/extract (test-page "title-override.md"))))))
+           (slug (sut/extract (test-page "title-override.md")))))
+    (is (= "nested/a-custom-title"
+           (slug (sut/extract (test-page "nested/title-override.md"))))))
 
   (testing "it defaults the slug to the file name"
     (is (= "lots-of-front-matter"

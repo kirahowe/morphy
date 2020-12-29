@@ -85,7 +85,7 @@ More nested:
       (is (str/starts-with?
             (get-content site "root-override") "slug: /root-override/"))
       (is (str/starts-with?
-            (get-content site "customized") "slug: /nested/customized/"))
+            (get-content site "customized") "slug: /customized/"))
       (is (str/starts-with?
             (get-content site "already-expanded-custom-slug") "slug: /already-expanded-custom-slug/"))))
 

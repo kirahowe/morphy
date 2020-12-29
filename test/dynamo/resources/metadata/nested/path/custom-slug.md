@@ -1,3 +1,3 @@
 ---
-slug: custom-slug-different-than-the-file-name
+slug: random/custom-slug-different-than-the-file-name
 ---

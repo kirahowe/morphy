@@ -1,0 +1,5 @@
+---
+slug: custom
+---
+
+Page content

@@ -3,7 +3,8 @@
             [clojure.string :as str]
             [dynamo.templates :as templates]
             [clojure.java.io :as io]
-            [front-matter.core :as fm]))
+            [front-matter.core :as fm]
+            [dynamo.util :as util]))
 
 (defn- make-dir-with-index [path]
   (let [[_ name exts] (re-matches #"([^\..]+)(\..+)$" (str path))]
@@ -26,13 +27,19 @@
     (or (named-as-template? path)
         (recur (fs/parent path)))))
 
-(defn ->page [input-dir original-path]
-  (let [relative-path (fs/relativize original-path input-dir)]
-    (if (templates/templatable? original-path)
-      (let [parsed (-> original-path slurp fm/parse-front-matter)
-            new-path (get-path relative-path (:front-matter parsed))]
-        (assoc parsed :path new-path))
-      {:path relative-path})))
+(defn- templatable? [path]
+  (not (str/includes? (str path) "assets/")))
+
+(defn ->page [relative-path original-path]
+  (let [parsed (-> original-path slurp fm/parse-front-matter)
+        new-path (get-path relative-path (:front-matter parsed))]
+    (assoc parsed :site/path new-path :site/source-path new-path)))
+
+(defn- ->pages [input-dir pages file]
+  (let [relative-path (fs/relativize file input-dir)]
+    (if (templatable? relative-path)
+      (util/push pages :pages/templatable (->page relative-path file))
+      (util/push pages :pages/assets {:site/path relative-path}))))
 
 (defn load-pages [input-dir]
   (->> input-dir
@@ -42,4 +49,4 @@
        (remove template?)
        sort
        reverse
-       (map (partial ->page input-dir))))
+       (reduce (partial ->pages input-dir) {})))

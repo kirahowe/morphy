@@ -34,3 +34,6 @@
 
 (defn now []
   (->rfc-1123-date (ZonedDateTime/now)))
+
+(defn push [m k v]
+  (update m k concat [v]))

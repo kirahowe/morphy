@@ -10,7 +10,7 @@
 (defn- flatten-front-matter [{:keys [front-matter] :as page}]
   (merge (dissoc page :front-matter) front-matter))
 
-(defn populate-slug [{:keys [path] :as page}]
+(defn populate-slug [{:keys [site/path] :as page}]
   (let [parent-path (when-let [p (fs/parent path)] (str "/" p))
         slug (str parent-path "/")]
     (assoc page :slug slug)))
@@ -19,9 +19,6 @@
   (cond-> page
     date (assoc :rss-date (util/->rfc-1123-date (:date page)))
     date (update :date util/format-date)))
-
-(defn templatable? [path]
-  (not (str/includes? (str path) "assets/")))
 
 (defn- get-parent-path [path]
   (or (and path (fs/parent path)) ""))
@@ -43,9 +40,9 @@
 
 (def null-layout "{{{content}}}")
 
-(defn- find-layout [{:keys [path layout]} input-dir]
+(defn- find-layout [{:keys [site/source-path layout]} input-dir]
   (if-let [template-path (or (find-named-template layout input-dir)
-                             (first-found-template path input-dir))]
+                             (first-found-template source-path input-dir))]
     (slurp template-path)
     null-layout))
 
@@ -84,11 +81,11 @@
 (defn- render-mustache [site-model partials template]
   (m/render template site-model partials))
 
-(defmulti insert-site-data (fn [_site-model _partials {:keys [path]}] (fs/ext path)))
+(defmulti insert-site-data (fn [_site-model _partials {:keys [site/path]}] (fs/ext path)))
 
 (defmethod insert-site-data "mustache" [site-model partials page]
   (-> page
-      (update :path strip-final-ext)
+      (update :site/path strip-final-ext)
       (update :content (partial render-mustache
                                 (merge site-model (dissoc page :content))
                                 partials))))
@@ -99,22 +96,18 @@
 (defn- insert-into-layout [site-model layout partials page]
   (assoc page :content (m/render layout (merge page site-model) partials)))
 
-(defn- template-page [site-model input-dir {:keys [path] :as page}]
-  ;; TODO: handle this differently-- grab out all the assets first or something
-  (if (templatable? path)
-    (let [layout (get-layout page input-dir)
-          partials (get-partials path input-dir {})]
-      ((comp
-         (partial insert-into-layout site-model layout partials)
-         (partial insert-site-data site-model partials))
-       page))
-    page))
+(defn- template-page [site-model input-dir {:keys [site/source-path] :as page}]
+  (let [layout (get-layout page input-dir)
+        partials (get-partials source-path input-dir {})]
+    ((comp
+       (partial insert-into-layout site-model layout partials)
+       (partial insert-site-data site-model partials))
+     page)))
 
 (defn- get-parent [path]
-  (cond-> (-> path fs/parent (or ""))
-    (templatable? path) (-> fs/parent (or "root"))))
+  (-> path fs/parent (or "") fs/parent (or "root")))
 
-(defn- get-group-name [{:keys [path]}]
+(defn- get-group-name [{:keys [site/path]}]
   (let [parent-dir (get-parent path)]
     (-> parent-dir str (str/replace #"\/index\..+$" "") keyword)))
 
@@ -123,11 +116,11 @@
          :meta/last-modified (util/now)
          :meta/root-url root-url))
 
-(defn render [{:keys [pages input-dir root-url] :as context}]
-  (let [pages* (map (comp populate-slug format-dates flatten-front-matter) pages)
+(defn render [{:keys [pages/templatable input-dir root-url] :as context}]
+  (let [pages* (map (comp populate-slug format-dates flatten-front-matter) templatable)
         site-model (->> pages*
                         (group-by get-group-name)
                         (assoc-metadata root-url))]
     (->> pages*
          (map (partial template-page site-model input-dir))
-         (assoc context :pages))))
+         (assoc context :pages/templatable))))

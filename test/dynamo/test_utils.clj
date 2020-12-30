@@ -19,6 +19,9 @@
 (def resources "test/dynamo/resources/")
 
 (defn test-page
-  "Generates a test page, assumes file is relative to resources path"
-  [file]
-  (data/->page resources (fs/path resources file)))
+  "Generates a test page, defaults file to  being relative to resources path"
+  ([file]
+   (test-page file resources))
+  ([root file]
+   (let [full-path (fs/path root file)]
+     (data/->page file full-path))))

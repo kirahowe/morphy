@@ -12,34 +12,28 @@
 
 (deftest populate-slug
   (testing "it inserts slug into each page"
-    (let [slugged (sut/populate-slug {:path "index.html"})]
+    (let [slugged (sut/populate-slug {:site/path "index.html"})]
       (is (= "/" (:slug slugged))))
 
-    (let [slugged (sut/populate-slug {:path "this-is-the-slug/index.html"})]
+    (let [slugged (sut/populate-slug {:site/path "this-is-the-slug/index.html"})]
       (is (= "/this-is-the-slug/" (:slug slugged))))
 
-    (let [slugged (sut/populate-slug {:path "nested/page-name/index.html"})]
+    (let [slugged (sut/populate-slug {:site/path "nested/page-name/index.html"})]
       (is (= "/nested/page-name/" (:slug slugged))))
 
-    (let [slugged (sut/populate-slug {:path "even-more/nested/page-name/index.html"})]
+    (let [slugged (sut/populate-slug {:site/path "even-more/nested/page-name/index.html"})]
       (is (= "/even-more/nested/page-name/" (:slug slugged))))))
 
 (defn- get-site [dir]
   (let [input-dir (str u/resources "templates/" dir)]
     (-> {:input-dir input-dir :root-url "https://test.com"}
-        (assoc :pages (core/build-pages input-dir))
+        (merge (core/build-pages input-dir))
         sut/render)))
-
-(defn- get-non-asset-pages [site]
-  (filter #(sut/templatable? (:path %)) (:pages site)))
-
-(defn- get-asset-pages [site]
-  (filter #(not (sut/templatable? (:path %))) (:pages site)))
 
 (defn- get-content [site search]
   (->> site
-       :pages
-       (filter (fn [{:keys [path]}]
+       :pages/templatable
+       (filter (fn [{:keys [site/path]}]
                  (= search (-> path fs/parent (or "") fs/name str))))
        first
        :content))
@@ -103,11 +97,10 @@ More nested:
 (deftest layouts
   (let [site (get-site "assets")]
     (testing "it inserts each non-asset page into the layout"
-      (is (every? #(str/starts-with? (:content %) "Layout:")
-                  (get-non-asset-pages site))))
+      (is (every? #(str/starts-with? (:content %) "Layout:") (:pages/templatable site))))
 
     (testing "it does not add content to asset pages"
-      (is (every? #(nil? (:content %)) (get-asset-pages site)))))
+      (is (every? #(nil? (:content %)) (:pages/assets site)))))
 
   (let [site (get-site "layouts")]
     (testing "it uses the nearest default layout to the page"
@@ -191,3 +184,11 @@ More nested:
 
     (testing "exposes last modified to partials"
       (is (re-find #"Last build time: \w+" (get-content site "with-partial"))))))
+
+(deftest overrides
+  (let [site (get-site "overrides")]
+    (testing "it uses the right partials when the slug is overridden"
+      (is (str/starts-with? (get-content site "root") "Partial: Override")))
+
+    (testing "it uses the right layout when the slug is overridden"
+      (is (str/starts-with? (get-content site "custom") "Nested layout override")))))

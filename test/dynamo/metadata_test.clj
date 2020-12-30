@@ -1,16 +1,15 @@
 (ns dynamo.metadata-test
   (:require [dynamo.metadata :as sut]
             [clojure.test :refer [deftest testing is]]
-            [dynamo.data :as data]
             [datoteka.core :as fs]
             [dynamo.test-utils :as u]))
 
 (def root (str u/resources "metadata/"))
 
 (defn- test-page [file-name]
-  (data/->page root (fs/path root file-name)))
+  (u/test-page root file-name))
 
-(defn- slug [{:keys [path]}]
+(defn- slug [{:keys [site/path]}]
   (-> path fs/parent str))
 
 (deftest extract-test
@@ -52,11 +51,11 @@
 
   (testing "it does not re-title slugs for current index files"
     (is (= "index.md"
-           (-> (sut/extract (test-page "index.md")) :path str))))
+           (-> (sut/extract (test-page "index.md")) :site/path str))))
 
   (testing "it does rename slugs for named leaf files"
     (is (= "lots-of-front-matter/index.md"
-           (-> (sut/extract (test-page "lots-of-front-matter.md")) :path str)))))
+           (-> (sut/extract (test-page "lots-of-front-matter.md")) :site/path str)))))
 
 (deftest getting-title
   (testing "it defaults the title to the first line that is a header and strips md headers"

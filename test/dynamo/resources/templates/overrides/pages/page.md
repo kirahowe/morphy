@@ -1,0 +1,5 @@
+---
+slug: root
+---
+
+Page content

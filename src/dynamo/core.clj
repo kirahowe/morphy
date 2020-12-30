@@ -23,7 +23,7 @@
     (when-not (fs/exists? parent)
       (fs/create-dir parent))))
 
-(defn- write-file! [{:keys [output-dir input-dir]} {:keys [path content]}]
+(defn- write-file! [{:keys [output-dir input-dir]} {:keys [site/path content]}]
   (let [file-name (fs/path output-dir path)]
     (ensure-dir! file-name)
     (if content
@@ -31,22 +31,25 @@
       (io/copy (io/file input-dir path) (io/file file-name)))
     (println "Wrote " (str file-name))))
 
-(defn- write-files [{:keys [pages output-dir] :as context}]
+(defn- write-files [{:keys [pages/assets pages/templatable output-dir] :as context}]
   (ensure-dir! output-dir)
   (doall
-    (for [page pages]
+    (for [page (concat assets templatable)]
       (write-file! context page)))
   (println "Success!"))
 
+(defn- update-templatable [pages f]
+  (update pages :pages/templatable (partial map f)))
+
 (defn build-pages [input-dir]
-  (->> input-dir
-       data/load-pages
-       (map metadata/extract)
-       (map content/process)))
+  (-> input-dir
+      data/load-pages
+      (update-templatable metadata/extract)
+      (update-templatable content/process)))
 
 (defn generate-site [{:keys [input-dir] :as context}]
   (-> context
-      (assoc :pages (build-pages input-dir))
+      (merge (build-pages input-dir))
       templates/render
       write-files))
 
@@ -56,7 +59,6 @@
   (generate-site context))
 
 (comment
-  ;; (sort-by (comp :date val) #(compare %2 %1) ledger)
   (def input-dir "/Users/kmclean/code/projects/blog/site")
   (def output-dir "/Users/kmclean/code/projects/blog/dist")
   (def context {:input-dir input-dir :output-dir output-dir :root-url "https://kiramclean.com"})

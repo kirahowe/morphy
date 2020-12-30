@@ -5,7 +5,9 @@
 
 (deftest loading-pages
   (let [result (->> (sut/load-pages (str u/resources "data"))
-                    (reduce (fn [result {:keys [path] :as page}]
+                    vals
+                    flatten
+                    (reduce (fn [result {:keys [site/path] :as page}]
                               (assoc result (str path) page))
                             {}))]
 

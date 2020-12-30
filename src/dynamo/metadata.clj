@@ -19,10 +19,10 @@
     (cond-> page
       title (assoc :title title :has-title? true))))
 
-(defn- rename-slug [{:keys [path] :as page} slug]
+(defn- rename-slug [{:keys [site/path] :as page} slug]
   (let [name (fs/name path)
         new-path (fs/path slug name)]
-    (assoc page :path new-path)))
+    (assoc page :site/path new-path)))
 
 (defn- slugify [s]
   (some-> s
@@ -30,7 +30,7 @@
           str/lower-case
           (str/replace #"\s+" "-")) )
 
-(defn- slug-from-title [{:keys [title path]}]
+(defn- slug-from-title [{:keys [title site/path]}]
   (let [current-slug (fs/parent path)
         from-title (slugify title)
         current-parent (when current-slug (fs/parent current-slug))
@@ -49,7 +49,5 @@
 (defn- fill-in-title [page]
   (-> page add-title (remove-from-front-matter :title)))
 
-(defn extract [{:keys [content] :as page}]
-  (if content
-    (-> page fill-in-title update-slug)
-    page))
+(defn extract [page]
+  (-> page fill-in-title update-slug))

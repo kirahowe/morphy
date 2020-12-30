@@ -1,15 +1,16 @@
 (ns dynamo.content
   (:require [datoteka.core :as fs]
-            [clojure.spec.alpha :as s])
+            ;; [clojure.spec.alpha :as s]
+            )
   (:import org.commonmark.parser.Parser
            org.commonmark.renderer.html.HtmlRenderer))
 
-(defn- matches-ext [ext test-path]
-  (re-find (re-pattern (str "\\." ext "$")) (str test-path)))
+;; (defn- matches-ext [ext test-path]
+;;   (re-find (re-pattern (str "\\." ext "$")) (str test-path)))
 
-(s/def ::path fs/path?)
-(s/def ::content string?)
-(s/def ::page (s/keys :req-un [::path ::content]))
+;; (s/def ::path fs/path?)
+;; (s/def ::content string?)
+;; (s/def ::page (s/keys :req-un [::path ::content]))
 
 ;; (s/def ::html/path (s/and ::path (partial matches-ext "html")))
 ;; (s/def ::html/page (s/keys :req-un [::html/path ::content ::layout]
@@ -23,19 +24,15 @@
 (defn- ext-to-html [path]
   (-> path fs/split-ext first (str ".html") fs/path))
 
-(defmulti process (fn [{:keys [path]}] (fs/ext path)))
+(defmulti process (fn [{:keys [site/path]}] (fs/ext path)))
 
 (defn- markdown->html [content]
-  (let [parsed (-> (Parser/builder)
-                   .build
-                   (.parse content))]
-    (-> (HtmlRenderer/builder)
-        .build
-        (.render parsed))))
+  (let [parsed (-> (Parser/builder) .build (.parse content))]
+    (-> (HtmlRenderer/builder) .build (.render parsed))))
 
 (defmethod process "md" [page]
   (-> page
-      (update :path ext-to-html)
+      (update :site/path ext-to-html)
       (update :content markdown->html)))
 
 (defmethod process :default [page]

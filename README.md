@@ -1,3 +1,5 @@
+[![Dynamo static site generator](https://circleci.com/gh/kiramclean/dynamo.svg?style=shield)](https://app.circleci.com/pipelines/github/kiramclean/dynamo)
+
 # dynamo.core
 
 This is WIP. Not advisable to try to use it for anything yet.. everything will change!

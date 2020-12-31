@@ -1,10 +1,10 @@
-(ns dynamo.core
+(ns morphy.core
   (:gen-class)
   (:require [datoteka.core :as fs]
-            [dynamo.content :as content]
-            [dynamo.data :as data]
-            [dynamo.templates :as templates]
-            [dynamo.metadata :as metadata]
+            [morphy.content :as content]
+            [morphy.data :as data]
+            [morphy.templates :as templates]
+            [morphy.metadata :as metadata]
             [clojure.java.io :as io]))
 
 ;; (require 'sc.api)

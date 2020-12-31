@@ -1,7 +1,7 @@
-(ns dynamo.content-test
-  (:require [dynamo.content :as sut]
+(ns morphy.content-test
+  (:require [morphy.content :as sut]
             [clojure.test :refer [deftest testing is]]
-            [dynamo.test-utils :as u]
+            [morphy.test-utils :as u]
             [datoteka.core :as fs]))
 
 (def root (str u/resources "content/"))

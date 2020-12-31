@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>dynamo</groupId>
-  <artifactId>dynamo.core</artifactId>
+  <groupId>morphy</groupId>
+  <artifactId>morphy.core</artifactId>
   <version>0.1.0-SNAPSHOT</version>
-  <name>dynamo.core</name>
+  <name>morphy.core</name>
   <description>FIXME: my new application.</description>
-  <url>https://github.com/dynamo/dynamo.core</url>
+  <url>https://github.com/morphy/morphy.core</url>
   <licenses>
     <license>
       <name>Eclipse Public License</name>
@@ -19,9 +19,9 @@
     </developer>
   </developers>
   <scm>
-    <url>https://github.com/dynamo/dynamo.core</url>
-    <connection>scm:git:git://github.com/dynamo/dynamo.core.git</connection>
-    <developerConnection>scm:git:ssh://git@github.com/dynamo/dynamo.core.git</developerConnection>
+    <url>https://github.com/morphy/morphy.core</url>
+    <connection>scm:git:git://github.com/morphy/morphy.core.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/morphy/morphy.core.git</developerConnection>
     <tag>HEAD</tag>
   </scm>
   <dependencies>

@@ -1,10 +1,10 @@
-(ns dynamo.data
+(ns morphy.data
   (:require [datoteka.core :as fs]
             [clojure.string :as str]
-            [dynamo.templates :as templates]
+            [morphy.templates :as templates]
             [clojure.java.io :as io]
             [front-matter.core :as fm]
-            [dynamo.util :as util]))
+            [morphy.util :as util]))
 
 (defn- make-dir-with-index [path]
   (let [[_ name exts] (re-matches #"([^\..]+)(\..+)$" (str path))]

@@ -1,9 +1,9 @@
-(ns dynamo.test-utils
+(ns morphy.test-utils
   (:require
    ;; [clojure.spec.gen.alpha :as gen]
             [datoteka.core :as fs]
             ;; [clojure.string :as str]
-            [dynamo.data :as data]))
+            [morphy.data :as data]))
 
 ;; (defn non-blank-list-gen [g]
 ;;   (gen/such-that #(seq %) (gen/list g)))
@@ -16,7 +16,7 @@
 ;;                     (str (apply str/join "/" args) "." ext)))
 ;;             (non-blank-list-gen non-blank-string-gen)))
 
-(def resources "test/dynamo/resources/")
+(def resources "test/morphy/resources/")
 
 (defn test-page
   "Generates a test page, defaults file to  being relative to resources path"

@@ -1,6 +1,6 @@
-[![Dynamo static site generator](https://circleci.com/gh/kiramclean/dynamo.svg?style=shield)](https://app.circleci.com/pipelines/github/kiramclean/dynamo)
+[![Morphy static site generator](https://circleci.com/gh/kiramclean/morphy.svg?style=shield)](https://app.circleci.com/pipelines/github/kiramclean/morphy)
 
-# dynamo.core
+# morphy.core
 
 This is WIP. Not advisable to try to use it for anything yet.. everything will change!
 
@@ -8,7 +8,7 @@ FIXME: my new application.
 
 ## Installation
 
-Download from https://github.com/dynamo/dynamo.core.
+Download from https://github.com/morphy/morphy.core.
 
 ## Usage
 
@@ -27,7 +27,7 @@ FIXME: explanation
 
 Run the project directly:
 
-    $ clojure -m dynamo.core
+    $ clojure -m morphy.core
 
 Run the project's tests:
 
@@ -39,7 +39,7 @@ Build an uberjar:
 
 Run that uberjar:
 
-    $ java -jar dynamo.core.jar
+    $ java -jar morphy.core.jar
 
 ## Options
 

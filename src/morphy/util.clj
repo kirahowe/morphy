@@ -1,4 +1,4 @@
-(ns dynamo.util
+(ns morphy.util
   (:require [clojure.walk :as walk]
             [clojure.string :as str])
   (:import java.time.ZonedDateTime

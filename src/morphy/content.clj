@@ -1,4 +1,4 @@
-(ns dynamo.content
+(ns morphy.content
   (:require [datoteka.core :as fs]
             ;; [clojure.spec.alpha :as s]
             )

@@ -1,8 +1,8 @@
-(ns dynamo.metadata-test
-  (:require [dynamo.metadata :as sut]
+(ns morphy.metadata-test
+  (:require [morphy.metadata :as sut]
             [clojure.test :refer [deftest testing is]]
             [datoteka.core :as fs]
-            [dynamo.test-utils :as u]))
+            [morphy.test-utils :as u]))
 
 (def root (str u/resources "metadata/"))
 

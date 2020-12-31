@@ -1,8 +1,8 @@
-(ns dynamo.templates
+(ns morphy.templates
   (:require [datoteka.core :as fs]
             [cljstache.core :as m]
             [clojure.string :as str]
-            [dynamo.util :as util]))
+            [morphy.util :as util]))
 
 (defn- strip-final-ext [path]
   (-> path fs/split-ext first fs/path))

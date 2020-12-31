@@ -1,7 +1,7 @@
-(ns dynamo.data-test
-  (:require [dynamo.data :as sut]
+(ns morphy.data-test
+  (:require [morphy.data :as sut]
             [clojure.test :refer [deftest testing is]]
-            [dynamo.test-utils :as u]))
+            [morphy.test-utils :as u]))
 
 (deftest loading-pages
   (let [result (->> (sut/load-pages (str u/resources "data"))

@@ -1,4 +1,4 @@
-(ns dynamo.metadata
+(ns morphy.metadata
   (:require [datoteka.core :as fs]
             [clojure.string :as str]))
 

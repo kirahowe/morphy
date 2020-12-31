@@ -1,8 +1,8 @@
-(ns dynamo.templates-test
-  (:require [dynamo.templates :as sut]
+(ns morphy.templates-test
+  (:require [morphy.templates :as sut]
             [clojure.test :refer [deftest testing is]]
-            [dynamo.test-utils :as u]
-            [dynamo.core :as core]
+            [morphy.test-utils :as u]
+            [morphy.core :as core]
             [clojure.string :as str]
             [datoteka.core :as fs])
   (:import java.time.ZonedDateTime

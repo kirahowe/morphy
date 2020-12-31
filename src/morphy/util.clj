@@ -1,18 +1,8 @@
 (ns morphy.util
-  (:require [clojure.walk :as walk]
-            [clojure.string :as str])
+  (:require [clojure.string :as str])
   (:import java.time.ZonedDateTime
            java.time.format.DateTimeFormatter
            java.time.ZoneId))
-
-(defn deep-transform-values [m f]
-  (walk/postwalk (fn [x]
-                   (if (map? x)
-                     (->> x
-                          (map (fn [[k v]] [k (f v)]))
-                          (into {}))
-                     x))
-                 m))
 
 (defn- ensure-local-date [v]
   (if (instance? java.util.Date v)
@@ -24,7 +14,7 @@
 (defn format-date [v]
   (-> v
       ensure-local-date
-      (.format (DateTimeFormatter/ofPattern "MMM dd, yyyy"))
+      (.format (DateTimeFormatter/ofPattern "MMMM d, yyyy"))
       (str/replace #"\." "")))
 
 (defn ->rfc-1123-date [v]

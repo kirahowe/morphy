@@ -43,12 +43,12 @@
     (let [formatted (sut/format-dates {:date (ZonedDateTime/of
                                                (LocalDateTime/of 2019, Month/MARCH, 28, 14, 33)
                                                (ZoneId/of "UTC")) })]
-      (is (= "Mar 28, 2019" (:date formatted)))
+      (is (= "March 28, 2019" (:date formatted)))
       (is (= "Thu, 28 Mar 2019 14:33:00 GMT" (:rss-date formatted)))))
 
   (testing "it formats dates from front matter"
     (let [site (get-site "dates")]
-      (is (= "Formatted date: Jan 01, 2020\n" (get-content site "page"))))))
+      (is (= "Formatted date: January 1, 2020\n" (get-content site "page"))))))
 
 (deftest basic-templating
   (let [site (get-site "simple-layout")]

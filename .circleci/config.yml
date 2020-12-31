@@ -30,4 +30,8 @@ jobs:
 
       - run:
           name: Run tests
-          command: clojure -M:test
+          command: clojure -M:coverage
+
+      - run:
+          name: Send test coverage to Codecov
+          command: bash <(curl -s https://codecov.io/bash)

@@ -1,4 +1,6 @@
-[![Morphy static site generator](https://circleci.com/gh/kiramclean/morphy.svg?style=shield)](https://app.circleci.com/pipelines/github/kiramclean/morphy)
+[![Morphy static site generator circleci status](https://circleci.com/gh/kiramclean/morphy.svg?style=shield)](https://app.circleci.com/pipelines/github/kiramclean/morphy)
+
+[![Morphy static site generator code coverage status](https://codecov.io/gh/kiramclean/morphy/branch/main/graph/badge.svg?token=SMXPW0BF1Q)](https://codecov.io/gh/kiramclean/morphy)
 
 # morphy.core
 
@@ -32,6 +34,10 @@ Run the project directly:
 Run the project's tests:
 
     $ clj -M:test
+
+Run the project's tests and report code coverage:
+
+    $ clj -M:coverage
 
 Build an uberjar:
 

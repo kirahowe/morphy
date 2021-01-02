@@ -1,7 +1,5 @@
 (ns morphy.content
-  (:require [datoteka.core :as fs]
-            ;; [clojure.spec.alpha :as s]
-            )
+  (:require [datoteka.core :as fs])
   (:import org.commonmark.parser.Parser
            org.commonmark.renderer.html.HtmlRenderer))
 

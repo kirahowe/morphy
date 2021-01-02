@@ -10,6 +10,7 @@
 - [ ] Ignore file system crap e.g. `.DS_Store` files
   - ignore all dot files?
 - [ ] make date formatting configurable
+- [ ] rename slug -> permalink
 
 ---
 

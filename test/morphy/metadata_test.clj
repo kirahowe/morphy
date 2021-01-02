@@ -66,12 +66,19 @@
 
   (testing "it does not add a title if the first line is not a header"
     (let [no-title-page (sut/extract (test-page "no-header.html"))]
-      (is (= nil (:title no-title-page)))
-      (is (= nil (:has-title?  no-title-page)))))
+      (is (= nil (:title no-title-page)))))
 
-  (testing "it's title is over-writable by user front matter"
+  (testing "it can be overridden by user metadata"
     (is (= "Custom user title"
-           (:title (sut/extract (test-page "title-override.md"))))))
+           (:title (sut/extract (test-page "title-override.md")))))))
 
-  (testing "it adds a flag so templates can test for presence of a title"
-    (is (= true (:has-title? (sut/extract (test-page "title-override.md")))))))
+(deftest description
+  (testing "it truncates the content rendered as plaintext at 30 words by default"
+    (is (= (str "The default description is assumed to be the first 30 words of the "
+                "content by default, but rendered as plaintext not html so that "
+                "no weird characters show up. Also...")
+           (:description (sut/extract (test-page "description-from-content.md"))))))
+
+  (testing "it can be overridden by user metadata"
+    (is (= "Custom description"
+           (:description (sut/extract (test-page "description-override.md")))))))

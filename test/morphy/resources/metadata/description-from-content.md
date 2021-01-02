@@ -1,0 +1,1 @@
+The default description is assumed to be the first 30 words of the content by default, but rendered as plaintext not html so that no weird characters show up. Also this is long so that I can test it gets truncated.

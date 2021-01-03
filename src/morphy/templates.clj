@@ -2,23 +2,11 @@
   (:require [datoteka.core :as fs]
             [cljstache.core :as m]
             [clojure.string :as str]
-            [morphy.util :as util]))
+            [morphy.templating.page-data :as pd]
+            [morphy.templating.site-model :as sm]))
 
 (defn- strip-final-ext [path]
   (-> path fs/split-ext first fs/path))
-
-(defn- flatten-front-matter [{:keys [front-matter] :as page}]
-  (merge (dissoc page :front-matter) front-matter))
-
-(defn populate-slug [{:keys [site/path] :as page}]
-  (let [parent-path (when-let [p (fs/parent path)] (str "/" p))
-        slug (str parent-path "/")]
-    (assoc page :slug slug)))
-
-(defn format-dates [{:keys [date] :as page}]
-  (cond-> page
-    date (assoc :rss-date (util/->rfc-1123-date (:date page)))
-    date (update :date util/format-date)))
 
 (defn- get-parent-path [path]
   (or (and path (fs/parent path)) ""))
@@ -104,23 +92,10 @@
        (partial insert-site-data site-model partials))
      page)))
 
-(defn- get-parent [path]
-  (-> path fs/parent (or "") fs/parent (or "root")))
-
-(defn- get-group-name [{:keys [site/path]}]
-  (let [parent-dir (get-parent path)]
-    (-> parent-dir str (str/replace #"\/index\..+$" "") keyword)))
-
-(defn- assoc-metadata [root-url site]
-  (assoc site
-         :meta/last-modified (util/now)
-         :meta/root-url root-url))
-
-(defn render [{:keys [pages/templatable input-dir root-url] :as context}]
-  (let [pages* (map (comp populate-slug format-dates flatten-front-matter) templatable)
-        site-model (->> pages*
-                        (group-by get-group-name)
-                        (assoc-metadata root-url))]
+(defn render [{:keys [pages/templatable input-dir] :as context}]
+  (let [pages* (map pd/populate-page-data templatable)
+        site-model (sm/get-site-model (assoc context
+                                             :pages/ready-to-template pages*))]
     (->> pages*
          (map (partial template-page site-model input-dir))
          (assoc context :pages/templatable))))

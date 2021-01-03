@@ -1,9 +1,9 @@
 (ns morphy.test-utils
   (:require
-   ;; [clojure.spec.gen.alpha :as gen]
-            [datoteka.core :as fs]
-            ;; [clojure.string :as str]
-            [morphy.data :as data]))
+   [datoteka.core :as fs]
+   [morphy.data :as data]
+   [morphy.core :as core]
+   [morphy.templates :as templates]))
 
 ;; (defn non-blank-list-gen [g]
 ;;   (gen/such-that #(seq %) (gen/list g)))
@@ -25,3 +25,17 @@
   ([root file]
    (let [full-path (fs/path root file)]
      (data/->page file full-path))))
+
+(defn get-site [dir]
+  (let [input-dir (str resources dir)]
+    (-> {:input-dir input-dir :root-url "https://test.com"}
+        (merge (core/build-pages input-dir))
+        templates/render)))
+
+(defn get-content [site search]
+  (->> site
+       :pages/templatable
+       (filter (fn [{:keys [site/path]}]
+                 (= search (-> path fs/parent (or "") fs/name str))))
+       first
+       :content))

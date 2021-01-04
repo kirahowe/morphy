@@ -1,0 +1,6 @@
+{{# site/groups }}
+{{ group/label }}{{^ group/label}}No group label{{/ group/label }} - {{ group/count }}
+-----
+{{# group/items }}{{ content }}{{/ group/items }}
+-----
+{{/ site/groups }}

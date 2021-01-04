@@ -1,0 +1,127 @@
+* TO DO
+
+** To triage
+
+   - [ ] partials containing partials?
+
+** Site generation
+
+   - [ ] Ignore file system crap e.g. `.DS_Store` files (probably just all dot files?)
+   - [ ] make date formatting configurable
+   - [ ] rename slug -> permalink
+   - [ ] Highlight syntax 
+   - [ ] Do something about duplicate slugs
+     - fail?
+     - warn and add a number to them?
+   - [ ] Make slugging (from titles) more robust
+     - Right now it just replaces spaces with -. Make this work for others besides me.
+
+** To think more about
+
+*** Categories
+    Using directories for categories doesn't really work because URIs should be permanent. Re-think how to support categories to group posts on home page but be able to change from "Recent" to another category without changing the permalink. Maybe call them series.
+
+*** Relative image links in pre-expanded directories get the wrong slug 
+    With a folder called .e.g "post-name" that has a different slug, like from the title for example, relative image paths used in that folder's index will get the "post-name" in the path, not the new slug. Not sure this should really be different since it's unintuitive that some file's slug would come from something in another file, but anyway, just flagging this so I don't forget about it forever.
+
+*** Minify css/html?
+    Probably not necessary.. look into whether it would be useful to cut out all the ugly whitespace weirdness from final rendered pages that actually get shipped.
+
+*** Support .md.mustache    
+    Right now you can have .html.mustache and get partials filled in or .md and have it rendered to html, but not both, and that might be nice.. maybe. Think about that first then maybe do it.
+
+*** Revisit checking for titles 
+    Right now auto-populating the title and descriptions assumes the file is markdown. Probably need to stop making assumptions.
+
+**  Issues
+
+*** Parsing front matter fails when there are spaces after the second row of hyphens
+    Also it leaves an initial new line at the top of the content. It should strip beginning (and trailing?) new lines.
+
+*** Filenames with dots in don't work
+    2020.12.12-title.md is a valid file name but breaks site generation because of the dots in the file name. Either it should work, or fail the site build with an explanation that filenames with dots are not allowed.
+
+** Done
+
+   - [x] format dates that get automatically cast from yaml
+   - [x] Collect partials and pass them to mustache renderer
+   - [x] Support nested directories of partials
+   - [x] Support custom templates
+     - specify the name of a template in the front-matter (instead of using the
+       default one)
+   - [x] Support overriding partials in child directories
+     - closest partial gets used
+     - also support no partials
+   - [x] Support non-html mustache templates
+     - file-name.md.mustache would get treated like a mustache template/partial,
+       but also processed as markdown first before being templated
+     - always pass mustache html, but allow for other processing first
+   - [x] Pass a tree of pages to templates as `pages`
+   - [x] Expand loose pages into directories with an index in them
+     - so the url doesn't need to end with .html
+   - [x] Support already-expanded directories
+   - [x] Populate descriptions
+
+** Error cases to test
+
+   - [ ] more deeply nested directories
+     - i.e. have an empty directory level in a path
+   - [ ] missing template vars at mustache compile time
+   - [ ] missing template files
+     - named template not found
+     - no template given
+   - [ ] missing partials
+   - [ ] use generated tests to come up with dummy data
+   - [ ] input dir does not exist
+
+** Better code
+
+   - [ ] Spec things
+     - generate property-based tests from these specs
+
+** CLI
+
+   - [ ] Make a CLI
+     - extract core part that takes in a context and writes the files
+     - `cli build` to compile whole website into output dir
+
+   - [ ] Development server
+     - something like `cli dev` to run a local server that pick up file changes and
+       re-builds the website on the fly while developing
+     - file watcher example: https://github.com/babashka/book/blob/master/script/watch.clj
+
+   - [ ] Did you mean? check for mis-spelled commands
+     - check unfound commands for potential match against known ones and suggest them
+
+** Documentation
+
+   - [ ] readme
+   - [ ] website
+     - installation
+     - getting started
+     - things to note:
+       - must have at least a base file template
+       - `content` var will be available here as _already-rendered-html_ -- need to
+         escape it in mustache template
+   - [ ] cli `help`
+     - cli usage
+
+   To document:
+   - default sorting order
+   - assumed locations of partials, layout
+   - how mustache files get rendered
+     - rendering contexts (site and individual page attrs)
+   - vars available in templates
+     - rendering context gets passed on to partials
+   - slug
+     - files automatically get put in a directory with an index so urls don't need
+       to have .html at the end, but this means the same content lives at two urls
+   - some default layout/template setups
+     - include an rss feed, sitemap
+   - need .mustache extension to use partials in a random page
+   - ~site/no-layout~ and ~site/leave-path-alone~ flags (maybe re-namespace these to use page or something more sensical?)
+
+** Before letting anyone else use
+
+   - namespace keywords to avoid conflicts with any user metadata ones
+   - document conventions about naming metadata keys

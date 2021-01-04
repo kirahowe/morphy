@@ -7,17 +7,6 @@
             [morphy.metadata :as metadata]
             [clojure.java.io :as io]))
 
-;; (require 'sc.api)
-
-(defn matches-ext [ext test-path]
-  (re-find (re-pattern (str "\\." ext "$")) (str test-path)))
-
-(s/def ::path fs/path?)
-(s/def ::html-path (s/and ::path (partial matches-ext "html")))
-(s/def ::content string?)
-(s/def ::html-page (s/keys :req-un [::html-path ::content] ))
-(s/def ::page (s/keys :req-un [::path ::content]))
-
 (defn- ensure-dir! [path]
   (when-let [parent (fs/parent path)]
     (when-not (fs/exists? parent)

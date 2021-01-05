@@ -14,7 +14,21 @@
      - fail?
      - warn and add a number to them?
    - [ ] Make slugging (from titles) more robust
-     - Right now it just replaces spaces with -. Make this work for others besides me.
+     - Right now it just replaces spaces with -. Make this work for others besides 
+
+** Error cases to test and handle
+
+   - [ ] more deeply nested directories
+     - i.e. have an empty directory level in a path
+   - [ ] missing template vars at mustache compile time
+   - [ ] missing template files
+     - named template not found
+     - no template given
+   - [ ] missing partials
+   - [ ] use generated tests to come up with dummy data
+   - [ ] input dir does not exist
+   - [ ] group non-happy paths
+     - [ ] multiple groups added
 
 ** To think more about
 
@@ -61,18 +75,6 @@
      - so the url doesn't need to end with .html
    - [x] Support already-expanded directories
    - [x] Populate descriptions
-
-** Error cases to test
-
-   - [ ] more deeply nested directories
-     - i.e. have an empty directory level in a path
-   - [ ] missing template vars at mustache compile time
-   - [ ] missing template files
-     - named template not found
-     - no template given
-   - [ ] missing partials
-   - [ ] use generated tests to come up with dummy data
-   - [ ] input dir does not exist
 
 ** Better code
 

@@ -2,8 +2,7 @@
   (:require
    [datoteka.core :as fs]
    [morphy.data :as data]
-   [morphy.core :as core]
-   [morphy.templates :as templates]))
+   [morphy.core :as core]))
 
 ;; (defn non-blank-list-gen [g]
 ;;   (gen/such-that #(seq %) (gen/list g)))
@@ -29,8 +28,7 @@
 (defn get-site [dir]
   (let [input-dir (str resources dir)]
     (-> {:input-dir input-dir :root-url "https://test.com"}
-        (merge (core/build-pages input-dir))
-        templates/render)))
+        (core/build-site))))
 
 (defn get-content [site search]
   (->> site

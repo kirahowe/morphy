@@ -92,10 +92,7 @@
        (partial insert-site-data site-model partials))
      page)))
 
-(defn render [{:keys [pages/templatable input-dir] :as context}]
-  (let [pages* (map pd/populate-page-data templatable)
-        site-model (sm/get-site-model (assoc context
-                                             :pages/ready-to-template pages*))]
-    (->> pages*
-         (map (partial template-page site-model input-dir))
-         (assoc context :pages/templatable))))
+(defn render [{:keys [pages/templatable site/model input-dir] :as context}]
+  (->> templatable
+       (map (partial template-page model input-dir))
+       (assoc context :pages/templatable)))

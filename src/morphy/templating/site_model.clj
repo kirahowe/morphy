@@ -22,9 +22,9 @@
       (Double/POSITIVE_INFINITY)
       priority)))
 
-(defn- get-groups [{:keys [pages/ready-to-template groups/sort-priority]
+(defn- get-groups [{:keys [pages/templatable groups/sort-priority]
                     :or {sort-priority []}}]
-  (->> ready-to-template
+  (->> templatable
        (group-by :site/group)
        (map ->group)
        (remove nil?)
@@ -37,20 +37,20 @@
    :tag/count (count items)
    :tag/items items})
 
-(defn- get-tags [{:keys [pages/ready-to-template]}]
-  (->> ready-to-template
+(defn- get-tags [{:keys [pages/templatable]}]
+  (->> templatable
        (reduce (fn [result {:keys [site/tags] :as page}]
                  (reduce (fn [r tag] (util/push r tag page)) result tags))
                {})
        (map ->tag)
        (sort-by :tag/label)))
 
-(defn get-site-model [{:keys [pages/ready-to-template root-url] :as context}]
-  (-> (group-by get-parent-name ready-to-template)
-      (assoc :site/groups (get-groups context))
-      (assoc :site/tags (get-tags context))
-      (assoc :meta/last-modified (util/now))
-      (assoc :meta/root-url root-url)))
+(defn build [{:keys [pages/templatable root-url] :as context}]
+  (assoc context :site/model (-> (group-by get-parent-name templatable)
+                                 (assoc :site/groups (get-groups context))
+                                 (assoc :site/tags (get-tags context))
+                                 (assoc :meta/last-modified (util/now))
+                                 (assoc :meta/root-url root-url))))
 
 ;; tags:
 ;; - auto-generate an index page in `tags` for each tag

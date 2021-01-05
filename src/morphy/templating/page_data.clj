@@ -15,7 +15,7 @@
 (defn- flatten-front-matter [{:keys [front-matter] :as page}]
   (merge (dissoc page :front-matter) front-matter))
 
-(defn populate-page-data [page]
+(defn populate [page]
   ((comp populate-slug
          format-dates
          flatten-front-matter)

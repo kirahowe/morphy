@@ -5,6 +5,8 @@
             [morphy.data :as data]
             [morphy.templates :as templates]
             [morphy.metadata :as metadata]
+            [morphy.templating.page-data :as page-data]
+            [morphy.templating.site-model :as site-model]
             [clojure.java.io :as io]))
 
 (defn- ensure-dir! [path]
@@ -34,13 +36,14 @@
   (-> input-dir
       data/load-pages
       (update-templatable metadata/extract)
-      (update-templatable content/process)))
+      (update-templatable content/process)
+      (update-templatable page-data/populate)))
 
-(defn generate-site [{:keys [input-dir] :as context}]
-  (-> context
-      (merge (build-pages input-dir))
-      templates/render
-      write-files))
+(defn build-site [{:keys [input-dir] :as context}]
+  (-> context (merge (build-pages input-dir)) site-model/build templates/render))
+
+(defn generate-site [context]
+  (-> context build-site write-files))
 
 (defn -main
   "Generates a static website"

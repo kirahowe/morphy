@@ -7,7 +7,9 @@
             [morphy.metadata :as metadata]
             [morphy.templating.page-data :as page-data]
             [morphy.templating.site-model :as site-model]
-            [clojure.java.io :as io]))
+            [morphy.tags :as tags]
+            [clojure.java.io :as io]
+            [clojure.string :as str]))
 
 (defn- ensure-dir! [path]
   (when-let [parent (fs/parent path)]
@@ -29,18 +31,23 @@
       (write-file! context page)))
   (println "Success!"))
 
-(defn- update-templatable [pages f]
-  (update pages :pages/templatable (partial map f)))
+(defn- update-templatable [context f]
+  (update context :pages/templatable (partial map f)))
 
-(defn build-pages [input-dir]
-  (-> input-dir
+(defn build-pages [context]
+  (-> context
       data/load-pages
       (update-templatable metadata/extract)
+      tags/populate
+      ;; tags/generate-index-pages
       (update-templatable content/process)
       (update-templatable page-data/populate)))
 
 (defn build-site [{:keys [input-dir] :as context}]
-  (-> context (merge (build-pages input-dir)) site-model/build templates/render))
+  (-> context
+      build-pages
+      site-model/build
+      templates/render))
 
 (defn generate-site [context]
   (-> context build-site write-files))
@@ -59,3 +66,4 @@
                 :groups/sort-priority ["Recent" "Tech"]})
 
   (generate-site context))
+

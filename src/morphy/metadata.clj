@@ -1,6 +1,7 @@
 (ns morphy.metadata
   (:require [datoteka.core :as fs]
-            [clojure.string :as str])
+            [clojure.string :as str]
+            [morphy.util :as util])
   (:import org.commonmark.parser.Parser
            org.commonmark.renderer.text.TextContentRenderer))
 
@@ -42,15 +43,9 @@
         new-path (fs/path slug name)]
     (assoc page :site/path new-path)))
 
-(defn- slugify [s]
-  (some-> s
-          str/trim
-          str/lower-case
-          (str/replace #"\s+" "-")) )
-
 (defn- slug-from-title [{:keys [title site/path]}]
   (let [current-slug (fs/parent path)
-        from-title (slugify title)
+        from-title (util/slugify title)
         current-parent (when current-slug (fs/parent current-slug))
         new-slug (str current-parent (when current-parent "/") from-title)]
     (and current-slug from-title new-slug)))
@@ -70,5 +65,14 @@
 (defn- fill-in-title [page]
   (-> page add-title (remove-from-front-matter :title)))
 
+(defn- pull-out-tags [page]
+  (if-let [tags (get-in page [:front-matter :site/tags])]
+    (-> page (assoc :site/tags tags) (remove-from-front-matter :site/tags))
+    page))
+
 (defn extract [page]
-  (-> page fill-in-title fill-in-description update-slug))
+  (-> page
+      fill-in-title
+      fill-in-description
+      update-slug
+      pull-out-tags))

@@ -4,23 +4,14 @@
             [morphy.test-utils :as u]
             [morphy.core :as core]))
 
-(defn get-site-model
-  ([dir group-sort-priority]
-   (let [input-dir (str u/resources dir)]
-     (-> {:input-dir input-dir
-          :root-url "https://test.com"
-          :groups/sort-priority group-sort-priority}
-         (merge (core/build-pages input-dir))
-         sut/build))))
-
 (deftest grouping
   (testing "group sort priority can be set manually"
-    (let [site (get-site-model "templates/groups/custom-sorted" ["c" "b" "a"])]
+    (let [site (u/get-site-model "templates/groups/custom-sorted" ["c" "b" "a"])]
       (is (= ["c" "b" "a"]
              (->> site :site/model :site/groups (map :group/label))))))
 
   (testing "manual group ordering can specify just one item"
-    (let [site (get-site-model "templates/groups/custom-sorted" ["b"])]
+    (let [site (u/get-site-model "templates/groups/custom-sorted" ["b"])]
       (is (= ["b" "a" "c"]
              (->> site :site/model :site/groups (map :group/label)))))))
 

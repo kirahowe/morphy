@@ -44,7 +44,7 @@
 (defn- dot-file? [path]
   (str/starts-with? (fs/name path) "."))
 
-(defn load-pages [input-dir]
+(defn load-pages [{:keys [input-dir] :as context}]
   (->> input-dir
        io/file
        file-seq
@@ -53,4 +53,5 @@
        (remove dot-file?)
        sort
        reverse
-       (reduce (partial ->pages input-dir) {})))
+       (reduce (partial ->pages input-dir) {})
+       (merge context)))

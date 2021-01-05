@@ -2,7 +2,8 @@
   (:require
    [datoteka.core :as fs]
    [morphy.data :as data]
-   [morphy.core :as core]))
+   [morphy.core :as core]
+   [morphy.templating.site-model :as site-model]))
 
 ;; (defn non-blank-list-gen [g]
 ;;   (gen/such-that #(seq %) (gen/list g)))
@@ -28,7 +29,7 @@
 (defn get-site [dir]
   (let [input-dir (str resources dir)]
     (-> {:input-dir input-dir :root-url "https://test.com"}
-        (core/build-site))))
+        core/build-site)))
 
 (defn get-content [site search]
   (->> site
@@ -37,3 +38,14 @@
                  (= search (-> path fs/parent (or "") fs/name str))))
        first
        :content))
+
+(defn get-site-model
+  ([dir]
+   (get-site-model dir []))
+  ([dir group-sort-priority]
+   (let [input-dir (str resources dir)]
+     (-> {:input-dir input-dir
+          :root-url "https://test.com"
+          :groups/sort-priority group-sort-priority}
+         core/build-pages
+         site-model/build))))

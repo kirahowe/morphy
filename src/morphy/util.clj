@@ -27,3 +27,9 @@
 
 (defn push [m k v]
   (update m k concat [v]))
+
+(defn slugify [s]
+  (some-> s
+          str/trim
+          str/lower-case
+          (str/replace #"\s+" "-")) )

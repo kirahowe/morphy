@@ -52,3 +52,21 @@ group B three
     (testing "it adds an rss-compatible last-modified timestamp"
       (is (re-find #"\w{3}, \d{2} \w{3} \d{4} \d{2}:\d{2}:\d{2} "
                    (:meta/rss-last-modified site))))))
+
+(deftest tags
+  (let [site (u/get-site "templates/tags/basic")]
+    (testing "it groups posts by tag"
+      (is (= "one - 2
+-----
+In one only
+In one and two
+
+-----
+two - 2
+-----
+In two only
+In one and two
+
+-----
+"
+             (u/get-content site ""))))))

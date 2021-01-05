@@ -28,7 +28,7 @@
    - [ ] use generated tests to come up with dummy data
    - [ ] input dir does not exist
    - [ ] group non-happy paths
-     - [ ] multiple groups added
+     - [ ] a page with multiple groups
 
 ** To think more about
 

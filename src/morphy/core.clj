@@ -48,8 +48,11 @@
   (generate-site context))
 
 (comment
-  (def input-dir "/Users/kmclean/code/projects/blog/site")
-  (def output-dir "/Users/kmclean/code/projects/blog/dist")
-  (def context {:input-dir input-dir :output-dir output-dir :root-url "https://kiramclean.com"})
+  (def input-dir "/Users/kira/code/projects/blog/site")
+  (def output-dir "/Users/kira/code/projects/blog/dist")
+  (def context {:input-dir input-dir
+                :output-dir output-dir
+                :root-url "https://kiramclean.com"
+                :groups/sort-priority ["Recent"]})
 
   (generate-site context))

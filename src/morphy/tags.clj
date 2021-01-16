@@ -2,22 +2,8 @@
   (:require [datoteka.core :as fs]
             [morphy.content :as content]
             [morphy.util :as util]
-            [morphy.templating.page-data :as page-data]))
-
-(def default-tag-index-template
-  "# {{ tag/label }}
-
-{{# tag/items }}
-- [{{ title }}]({{ slug }})
-{{/ tag/items }} ")
-
-(defn- ->index-page [{:keys [tag/label] :as tag}]
-  (merge tag
-         {:content default-tag-index-template
-          :site/path (fs/path "tags" (util/slugify label) "index.md")}))
-
-(defn- add-mustache-ext [{:keys [site/path] :as page}]
-  (assoc page :site/path (fs/path (str path ".mustache"))))
+            [morphy.templating.page-data :as page-data]
+            [clojure.string :as str]))
 
 (defn- ->tag [[label items]]
   {:tag/label label
@@ -34,12 +20,26 @@
        (sort-by :tag/label)
        (assoc-in context [:site/model :site/tags])))
 
-(defn generate-index-pages [{{:keys [site/tags]} :site/model :as context}]
-  (->> tags
+(def default-tag-index-template
+  "<h1>{{ tag/label }}</h1>
+<ul>
+{{# tag/items }}
+<li><a href={{ slug }}>{{ title }}</a></li>
+{{/ tag/items }}
+</ul>")
+
+(defn- ->index-page [{:keys [tag/label tag/slug] :as tag}]
+  (let [path (fs/path (str/replace-first slug "/" "") "index.html.mustache")]
+    (merge tag
+           {:content default-tag-index-template
+            :site/path path :site/source-path path})))
+
+(defn generate-index-pages [context]
+  ;; (sc.api/spy)
+  (->> context
+       :site/model
+       :site/tags
        (map ->index-page)
-       (map content/process)
-       (map page-data/populate)
-       (map add-mustache-ext)
        (update context :pages/templatable concat)
 
 

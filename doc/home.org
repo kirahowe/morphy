@@ -1,0 +1,24 @@
+* Morphy
+  
+** Tutorials (Quick start)
+   - quick (max 30 mins)
+   - easy
+   - not too easy that it feel like a trap later on
+
+** Topical guides
+  
+*** Content
+**** Directory structure
+*** Layouts
+**** Partials
+**** Named layouts
+**** Default layout
+*** Titles
+*** Slugs
+**** slug override
+*** Arbitrary page data
+*** Groups
+*** Tags
+
+** Reference
+   - exact arguments

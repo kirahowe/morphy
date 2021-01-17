@@ -1,10 +1,13 @@
+[![Morphy static site generator circleci status](https://circleci.com/gh/kiramclean/morphy.svg?style=shield)](https://app.circleci.com/pipelines/github/kiramclean/morphy)
+[![Morphy static site generator code coverage status](https://codecov.io/gh/kiramclean/morphy/branch/main/graph/badge.svg?token=SMXPW0BF1Q)](https://codecov.io/gh/kiramclean/morphy)
+
 <p align="center">
   <a href="https://github.com/kiramclean/morphy/actions?query=workflow%3ATests">
     <img src="https://github.com/kiramclean/morphy/workflows/Tests/badge.svg" alt="Morphy Clojure CI on Github Actions" >
   </a>
 
-  <a href="https://app.circleci.com/pipelines/github/kiramclean/morphy">
-    <img src="https://circleci.com/gh/kiramclean/morphy.svg?style=shield" alt="Morphy static site generator circleci status" >
+  <a href="">
+    <img src="" alt="" >
   </a>
 
   <a href="https://codecov.io/gh/kiramclean/morphy">

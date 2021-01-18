@@ -7,7 +7,7 @@ A simple, minimalist, general purpose static website generator written in Clojur
 
 🚨**WARNING**🚨
 
-This is uber alpha software; very much still a work in progress. It works for my purposes but is very likely going to change dramatically before I suggest anyone else use it. Consider this an unstable project for now. 
+This is uber alpha software; very much still a work in progress. It works for my purposes but is very likely going to change dramatically before I suggest anyone else use it. Consider this an unstable project for now. I believe there are benefits to working in public, which is why the project is public here on github while I'm still working on it.
 
 At the moment it only runs from a Clojure REPL and doesn't do much. I'm planning on making a CLI and all kinds of other things, but this is just a side project which I work on very sporadically.
 

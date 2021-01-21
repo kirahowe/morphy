@@ -53,6 +53,6 @@
   (def context {:input-dir input-dir
                 :output-dir output-dir
                 :root-url "https://kiramclean.com"
-                :groups/sort-priority ["Recent"]})
+                :groups/sort-priority ["Recent" "Tech"]})
 
   (generate-site context))

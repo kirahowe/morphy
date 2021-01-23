@@ -120,23 +120,21 @@ More nested:
 
 (deftest site-metadata
   (let [site (u/get-site "templates/meta")]
-    (testing "exposes root url to normal pages"
-      (is (str/includes? (u/get-content site "") "In page: https://test.com")))
-
-    (testing "exposes last modified to normal pages"
+    (testing "it exposes site metadata to normal pages"
+      (is (str/includes? (u/get-content site "") "In page: https://test.com"))
       (is (re-find #"Last build time: \w+" (u/get-content site ""))))
 
-    (testing "exposts root url to layouts"
-      (is (str/includes? (u/get-content site "with-layout") "From layout: https://test.com")))
+    (testing "it exposes site metadata to layouts"
+      (is (str/includes? (u/get-content site "with-layout")
+                         "From layout: https://test.com"))
+      (is (re-find #"Last build time: \w+"
+                   (u/get-content site "with-layout"))))
 
-    (testing "exposes last modified to normal pages"
-      (is (re-find #"Last build time: \w+" (u/get-content site "with-layout"))))
-
-    (testing "exposts root url to partials"
-      (is (str/includes? (u/get-content site "with-partial") "From partial: https://test.com")))
-
-    (testing "exposes last modified to partials"
-      (is (re-find #"Last build time: \w+" (u/get-content site "with-partial"))))))
+    (testing "it exposes site metadata to partials"
+      (is (str/includes? (u/get-content site "with-partial")
+                         "From partial: https://test.com"))
+      (is (re-find #"Last build time: \w+"
+                   (u/get-content site "with-partial"))))))
 
 (deftest overrides
   (let [site (u/get-site "templates/overrides")]

@@ -45,3 +45,10 @@ group B three
 -----
 "
              (u/get-content site ""))))))
+
+(deftest adding-timestamps
+  (let [site (get-site-model "templates/simple-layout")]
+
+    (testing "it adds an rss-compatible last-modified timestamp"
+      (is (re-find #"\w{3}, \d{2} \w{3} \d{4} \d{2}:\d{2}:\d{2} "
+                   (:meta/rss-last-modified site))))))

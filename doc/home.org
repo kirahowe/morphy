@@ -1,12 +1,15 @@
 * Morphy
-  
+
 ** Tutorials (Quick start)
    - quick (max 30 mins)
    - easy
    - not too easy that it feel like a trap later on
 
+*** Fingerprintint assets
+    - add manual query param or timestamp for now
+
 ** Topical guides
-  
+
 *** Content
 **** Directory structure
 *** Layouts

@@ -1,10 +1,13 @@
 (ns morphy.data-test
   (:require [morphy.data :as sut]
             [clojure.test :refer [deftest testing is]]
-            [morphy.test-utils :as u]))
+            [morphy.test-utils :as u]
+            [clojure.string :as str]
+            [datoteka.core :as fs]))
 
 (deftest loading-pages
-  (let [result (->> (sut/load-pages (str u/resources "data"))
+  (let [result (->> (str u/resources "data")
+                    sut/load-pages
                     vals
                     flatten
                     (reduce (fn [result {:keys [site/path] :as page}]
@@ -39,3 +42,15 @@
     (testing "it names files that are themselves templates properly"
       (is (contains? result "index.html.mustache"))
       (is (contains? result "dir/templated/index.html.mustache")))))
+
+(deftest dot-files
+  (testing "it ignores arbitrarily-named dotfiles mixed with content"
+    (let [result (sut/load-pages (str u/resources "data"))]
+      (is (= 3 (-> result :pages/assets count)))
+      (is (= 7 (-> result :pages/templatable count)))
+      (is (every? false? (->> result
+                              vals
+                              flatten
+                              (map :site/path)
+                              (map fs/name)
+                              (map #(str/starts-with? % "."))))))))

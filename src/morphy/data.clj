@@ -41,12 +41,16 @@
       (util/push pages :pages/templatable (->page relative-path file))
       (util/push pages :pages/assets {:site/path relative-path}))))
 
+(defn- dot-file? [path]
+  (str/starts-with? (fs/name path) "."))
+
 (defn load-pages [input-dir]
   (->> input-dir
        io/file
        file-seq
        (remove fs/directory?)
        (remove template?)
+       (remove dot-file?)
        sort
        reverse
        (reduce (partial ->pages input-dir) {})))

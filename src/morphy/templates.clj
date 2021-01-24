@@ -3,7 +3,8 @@
             [cljstache.core :as m]
             [clojure.string :as str]
             [morphy.templating.page-data :as pd]
-            [morphy.templating.site-model :as sm]))
+            [morphy.templating.site-model :as sm]
+            [morphy.templating.common :as c]))
 
 (defn- strip-final-ext [path]
   (-> path fs/split-ext first fs/path))
@@ -21,15 +22,10 @@
         template-path
         (recur (fs/parent path) input-dir)))))
 
-(defn- find-named-template [name input-dir]
-  (let [template-path (fs/path (str input-dir "/_layouts/" name ".mustache"))]
-    (when (fs/exists? template-path)
-      template-path)))
-
 (def null-layout "{{{content}}}")
 
 (defn- find-layout [{:keys [site/source-path layout]} input-dir]
-  (if-let [template-path (or (find-named-template layout input-dir)
+  (if-let [template-path (or (c/find-named-template layout input-dir)
                              (first-found-template source-path input-dir))]
     (slurp template-path)
     null-layout))

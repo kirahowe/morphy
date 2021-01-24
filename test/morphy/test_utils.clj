@@ -28,7 +28,9 @@
 
 (defn get-site [dir]
   (let [input-dir (str resources dir)]
-    (-> {:input-dir input-dir :root-url "https://test.com"}
+    (-> {:input-dir input-dir
+         :root-url "https://test.com"
+         :site-name "Test site"}
         core/build-site)))
 
 (defn get-content [site search]

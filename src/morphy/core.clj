@@ -39,13 +39,12 @@
       data/load-pages
       (update-templatable metadata/extract)
       (update-templatable page-data/populate)
-      tags/populate
-      tags/generate-index-pages
       (update-templatable content/process)))
 
 (defn build-site [{:keys [input-dir] :as context}]
   (-> context
       build-pages
+      tags/generate
       site-model/build
       templates/render))
 
@@ -66,4 +65,3 @@
                 :groups/sort-priority ["Recent" "Tech"]})
 
   (generate-site context))
-

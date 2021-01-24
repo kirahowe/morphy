@@ -17,11 +17,26 @@
 **** Named layouts
 **** Default layout
 *** Titles
+    - default to the file name
+    - overrideable in front matter
 *** Slugs
+    - default to the file name
+    - next checks for page title and slugifies that
+    - overrideable in front matter
 **** slug override
 *** Arbitrary page data
-*** Groups
-*** Tags
+*** Blogging features
+**** Groups
+     - each page can be in only one group
+**** Tags
+     - a page can have multiple tags
+     - use a default layout if none is specified (show it)
+     - can override this tag layout if desired by creating a layout specifically called ~morphy-tag-index.mustache~ in the ~_layouts~ directory.
+     - also automatically generates a feed.xml for each tag
+*** Deploying
+    - surge
+      - gzipping by default
+      - caching and cache busting by default
 
 ** Reference
    - exact arguments
